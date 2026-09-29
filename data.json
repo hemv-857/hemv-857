@@ -2,9 +2,13 @@
   "probability": 0.42,
   "streak": 0,
   "best_streak": 0,
-  "opened": null,
-  "updated": null,
-  "pending": null,
+  "opened": "2026-09-30",
+  "updated": "2026-09-30",
+  "pending": {
+    "for_date": "2026-09-30",
+    "predicted": 39,
+    "avg7": 38.71
+  },
   "last_result": null,
   "last_delta": 0.0,
   "last_note": null,

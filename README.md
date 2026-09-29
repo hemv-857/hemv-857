@@ -8,9 +8,13 @@ Software developer. I write code, occasionally it works.
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=0" alt="Hire probability 0.42% (analyst rating: STRONG SELL). Streak: 0." width="820">
+<img src="assets/ticker.svg?v=20260930" alt="Hire probability 0.42% (analyst rating: STRONG SELL). Streak: 0." width="820">
 
 </div>
+
+| Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
+|---|:-:|:-:|---|:-:|:-:|
+| **2026-09-30** (today) | 39 | ⏳ | Market open | | |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>
