@@ -18,6 +18,6 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": null,
+  "vote_issue": 1,
   "monthly_wrap": null
 }
