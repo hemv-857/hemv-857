@@ -4,9 +4,13 @@ $HIRED - the Hire Probability Exchange.
 
 Every run (00:05 IST via GitHub Actions):
   1. SETTLE  - if a prediction is pending for a day that has ended, fetch the real
-               commit count for that IST day and score it.
+               commit count for that IST day and score it. Also checks hourly
+               manipulation (10+ commits within any 60-minute window) and settles
+               visitor votes from the day's issue reactions.
   2. PREDICT - forecast today's commit count (rounded mean of the last 7 IST days).
-  3. RENDER  - rewrite data.json, assets/ticker.svg and the block inside README.md
+  3. VOTE    - open (or update) an issue for visitors to vote HIT or MISS.
+  4. WRAP    - on the 1st of each month, publish an "earnings report".
+  5. RENDER  - rewrite data.json, assets/ticker.svg and the block inside README.md
                between the HIRE_EXCHANGE markers.
 
 Standard library only. No pip install needed.
@@ -26,6 +30,7 @@ import random
 import re
 import sys
 import textwrap
+import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib import request
@@ -51,7 +56,29 @@ STREAK_BONUS_CAP = 5       # ...up to this many steps
 MANIP_MIN_COMMITS = 10     # "market manipulation" if actual >= 10
 MANIP_MULTIPLIER = 3       # ...and actual >= 3x the prediction
 
+# Hourly manipulation: 10+ commits within any 60-minute window = 🚨
+HOURLY_MANIP_MIN = 10
+HOURLY_WINDOW_MIN = 60
+
 HISTORY_KEEP = 120         # settled sessions kept in data.json
+README_ROWS = 14           # history rows shown in the README table
+
+# GraphQL retry
+RETRY_ATTEMPTS = 3
+RETRY_BASE_DELAY = 2.0     # seconds; doubles each attempt
+
+# Visitor voting issue
+VOTE_ISSUE_TITLE = "$HIRED Daily Forecast — Vote: will the bot hit today's number?"
+VOTE_REACT_HIT = "+1"      # 👍 = visitor says HIT
+VOTE_REACT_MISS = "-1"     # 👎 = visitor says MISS
+
+# Monthly wrap-up
+WRAP_NOTES = [
+    "Recruiter sentiment: unchanged. Model sentiment: smug.",
+    "The alpha is imaginary but the vibes are quarterly-confirmed.",
+    "Earnings beat expectations. Expectations were fictional.",
+    "Another month, another set of predictions nobody asked for.",
+]
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "data.json"
@@ -98,6 +125,11 @@ NOTES = {
         "Suspicious volume spike. Empty commits are not a personality.",
         "Pump and dump alert. Regulators have been notified. By me. Sarcastically.",
     ],
+    "MANIP_HOURLY": [
+        "🚨 Hourly manipulation: 10+ commits in under an hour. The SEC (Stack Enforcement Committee) is watching.",
+        "Volume spike within 60 minutes. Either a deadline or a breakdown. Probably both.",
+        "Commits-per-hour exceeds regulatory limits. Please gamble responsibly.",
+    ],
     "INIT": [
         "Exchange opens today. Listing price: optimistic. Fundamentals: pending.",
         "IPO day. Analysts are being polite about the valuation.",
@@ -128,6 +160,9 @@ def default_state() -> dict:
         "last_delta": 0.0,
         "last_note": None,
         "history": [],          # settled sessions, oldest first
+        "visitors": {"hit": 0, "miss": 0, "correct": 0},  # visitor vote tallies
+        "vote_issue": None,     # issue number for today's voting issue
+        "monthly_wrap": None,   # last month a wrap-up was published (YYYY-MM)
     }
 
 
@@ -143,7 +178,35 @@ def save_state(state: dict) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Commit counts
+# Stats (used in SVG + README)
+# --------------------------------------------------------------------------- #
+def stats(history: list[dict], best_streak: int) -> dict:
+    n = len(history)
+    if n == 0:
+        return {"n": 0, "hit_rate": 0.0, "exact": 0, "near": 0, "miss": 0, "best_streak": best_streak}
+    exact = sum(e["result"] == "HIT" for e in history)
+    near = sum(e["result"] == "NEAR" for e in history)
+    miss = sum(e["result"] in ("MISS", "CRASH", "MANIP") for e in history)
+    return {
+        "n": n,
+        "hit_rate": (exact + near) / n,
+        "exact": exact,
+        "near": near,
+        "miss": miss,
+        "best_streak": best_streak,
+    }
+
+
+def stats_line(history: list[dict], best_streak: int) -> str:
+    s = stats(history, best_streak)
+    if s["n"] == 0:
+        return "No sessions yet — market opens tomorrow."
+    return (f"{s['n']} sessions · {s['hit_rate']:.0%} hit rate · "
+            f"best streak {s['best_streak']} · {s['exact']} exact / {s['near']} near / {s['miss']} miss")
+
+
+# --------------------------------------------------------------------------- #
+# Commit counts - GraphQL with retry
 # --------------------------------------------------------------------------- #
 def _utc(dt: datetime) -> str:
     return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -154,6 +217,27 @@ def day_bounds_utc(d: date) -> tuple[str, str]:
     start = datetime(d.year, d.month, d.day, tzinfo=IST)
     end = start + timedelta(days=1) - timedelta(seconds=1)
     return _utc(start), _utc(end)
+
+
+def _request_json(req: request.Request, attempts: int = RETRY_ATTEMPTS) -> dict:
+    """POST/GET with exponential backoff. Retries on network errors and 5xx."""
+    delay = RETRY_BASE_DELAY
+    last_err: Exception | None = None
+    for i in range(attempts):
+        try:
+            with request.urlopen(req, timeout=30) as resp:
+                return json.load(resp)
+        except Exception as e:  # URLError, HTTPError, timeout, JSONDecodeError
+            last_err = e
+            code = getattr(e, "code", None)
+            # Don't retry 4xx (auth, bad request) — only network/5xx
+            if code is not None and 400 <= code < 500:
+                raise
+            if i < attempts - 1:
+                print(f"  retry {i+1}/{attempts-1} after error: {e} (sleeping {delay:.0f}s)", file=sys.stderr)
+                time.sleep(delay)
+                delay *= 2
+    raise RuntimeError(f"GitHub API failed after {attempts} attempts: {last_err}")
 
 
 def fetch_commit_counts(login: str, days: list[date], token: str) -> dict[date, int]:
@@ -176,8 +260,7 @@ def fetch_commit_counts(login: str, days: list[date], token: str) -> dict[date, 
             "User-Agent": "hire-exchange",
         },
     )
-    with request.urlopen(req, timeout=30) as resp:
-        payload = json.load(resp)
+    payload = _request_json(req)
     if payload.get("errors") or not payload.get("data", {}).get("user"):
         raise RuntimeError(f"GitHub GraphQL error: {payload.get('errors') or 'user not found'}")
     user = payload["data"]["user"]
@@ -187,6 +270,163 @@ def fetch_commit_counts(login: str, days: list[date], token: str) -> dict[date, 
 def mock_commit_counts(days: list[date]) -> dict[date, int]:
     pool = [0, 1, 2, 2, 3, 3, 3, 4, 5, 6, 14]
     return {d: random.Random(f"mock-{d.isoformat()}").choice(pool) for d in days}
+
+
+# --------------------------------------------------------------------------- #
+# Hourly manipulation detection (REST API)
+# --------------------------------------------------------------------------- #
+def fetch_commit_timestamps(login: str, target: date, token: str) -> list[datetime]:
+    """Fetch ISO timestamps of all commits on a given IST day via REST API.
+    Returns sorted datetimes in UTC. Empty list if API fails (graceful)."""
+    s, e = day_bounds_utc(target)
+    ts: list[datetime] = []
+    page = 1
+    while page <= 5:  # max 5 pages = 500 commits, plenty
+        url = (f"https://api.github.com/repos/{login}/{login}/commits"
+               f"?since={s}&until={e}&per_page=100&page={page}")
+        req = request.Request(url, headers={
+            "Authorization": f"bearer {token}",
+            "Accept": "application/vnd.github.v3+json",
+            "User-Agent": "hire-exchange",
+        })
+        try:
+            payload = _request_json(req, attempts=2)
+        except Exception:
+            break  # graceful: hourly check is best-effort
+        if not payload:
+            break
+        for c in payload:
+            try:
+                ts.append(datetime.fromisoformat(c["commit"]["committer"]["date"].replace("Z", "+00:00")))
+            except (KeyError, ValueError):
+                continue
+        if len(payload) < 100:
+            break
+        page += 1
+    return sorted(ts)
+
+
+def is_hourly_manipulation(timestamps: list[datetime]) -> bool:
+    """True if HOURLY_MANIP_MIN commits fall within any HOURLY_WINDOW_MIN window."""
+    if len(timestamps) < HOURLY_MANIP_MIN:
+        return False
+    n = len(timestamps)
+    j = 0
+    for i in range(n):
+        while j < n and (timestamps[j] - timestamps[i]).total_seconds() <= HOURLY_WINDOW_MIN * 60:
+            j += 1
+        if j - i >= HOURLY_MANIP_MIN:
+            return True
+    return False
+
+
+def mock_hourly_manipulation(actual: int, seed: str) -> bool:
+    """Deterministic mock: ~15% chance of hourly manipulation on days with enough commits."""
+    if actual < HOURLY_MANIP_MIN:
+        return False
+    return random.Random(f"hourly-{seed}").random() < 0.15
+
+
+# --------------------------------------------------------------------------- #
+# Visitor voting via issue reactions
+# --------------------------------------------------------------------------- #
+def _gh_api(method: str, path: str, token: str, body: dict | None = None):
+    """Minimal GitHub REST API helper. Returns parsed JSON or None on failure."""
+    url = f"https://api.github.com{path}"
+    data = json.dumps(body).encode() if body is not None else None
+    req = request.Request(url, data=data, method=method, headers={
+        "Authorization": f"bearer {token}",
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "hire-exchange",
+    })
+    try:
+        with request.urlopen(req, timeout=30) as resp:
+            raw = resp.read()
+            return json.loads(raw) if raw else None
+    except Exception as e:
+        print(f"  gh_api {method} {path} failed: {e}", file=sys.stderr)
+        return None
+
+
+def settle_visitor_votes(state: dict, actual: int, token: str) -> None:
+    """Count 👍/👎 reactions on yesterday's voting issue and update visitor tallies."""
+    issue_no = state.get("vote_issue")
+    if not issue_no:
+        return
+
+    reactions = _gh_api("GET", f"/repos/{state.get('_repo', '')}/issues/{issue_no}/reactions", token)
+    if reactions is None:
+        return
+    hit_votes = sum(1 for r in reactions if r.get("content") == VOTE_REACT_HIT)
+    miss_votes = sum(1 for r in reactions if r.get("content") == VOTE_REACT_MISS)
+    # Did the visitors win? (They vote HIT if they think the bot's prediction lands)
+    # We need the prediction for that issue — stored in state before settle
+    pred = state.get("_last_vote_predicted")
+    visitors = state.setdefault("visitors", {"hit": 0, "miss": 0, "correct": 0})
+    visitors["hit"] += hit_votes
+    visitors["miss"] += miss_votes
+    if pred is not None:
+        result = classify(pred, actual)
+        visitor_said_hit = hit_votes > miss_votes
+        visitor_was_right = (result in ("HIT", "NEAR")) == visitor_said_hit
+        if visitor_was_right:
+            visitors["correct"] += hit_votes + miss_votes
+    # Close the issue by commenting the result
+    comment = (f"**Settled:** forecast was {pred}, actual was {actual} → "
+               f"{RESULT_LABEL.get(classify(pred, actual), 'n/a')}. "
+               f"Visitors: {hit_votes} 👍 / {miss_votes} 👎.")
+    _gh_api("POST", f"/repos/{state.get('_repo', '')}/issues/{issue_no}/comments", token,
+            {"body": comment})
+    state["vote_issue"] = None
+
+
+def create_vote_issue(state: dict, token: str, login: str, mock: bool = False) -> None:
+    """Open today's voting issue so visitors can vote on the forecast."""
+    if mock:
+        return  # don't create issues in mock mode
+    if state.get("vote_issue"):
+        return  # already open for today
+    pred = state["pending"]["predicted"]
+    body = (
+        f"## Today's forecast: **{pred} commit{'s' if pred != 1 else ''}**\n\n"
+        f"Will the bot's prediction be correct (or within ±1)?\n\n"
+        f"- 👍 **+1** reaction = I think it'll **HIT**\n"
+        f"- 👎 **-1** reaction = I think it'll **MISS**\n\n"
+        f"Settles tomorrow at 00:05 IST. No prize. Just bragging rights.\n\n"
+        f"*Not financial advice. Also not a job guarantee.*"
+    )
+    repo = f"{login}/{login}"
+    result = _gh_api("POST", f"/repos/{repo}/issues", token,
+                     {"title": VOTE_ISSUE_TITLE, "body": body, "labels": ["hire-exchange"]})
+    if result and "number" in result:
+        state["vote_issue"] = result["number"]
+        state["_repo"] = repo
+
+
+# --------------------------------------------------------------------------- #
+# Monthly wrap-up
+# --------------------------------------------------------------------------- #
+def monthly_wrap(state: dict, today: date) -> str | None:
+    """Generate an earnings-report note on the 1st of each month. Returns None if not due."""
+    if today.day != 1:
+        return None
+    month_key = f"{today.year:04d}-{today.month:02d}"
+    if state.get("monthly_wrap") == month_key:
+        return None  # already published this month
+    state["monthly_wrap"] = month_key
+    # Find previous month's sessions
+    prev_month = (today.replace(day=1) - timedelta(days=1)).strftime("%Y-%m")
+    month_sessions = [e for e in state["history"] if e["date"].startswith(prev_month)]
+    if not month_sessions:
+        return None
+    s = stats(month_sessions, state["best_streak"])
+    prob_change = state["probability"] - month_sessions[0]["prob_before"]
+    return (
+        f"{prev_month} earnings report: {s['n']} sessions, "
+        f"{s['hit_rate']:.0%} hit rate, probability {'+' if prob_change >= 0 else ''}{prob_change:.1f}pts. "
+        f"{random.Random(month_key).choice(WRAP_NOTES)}"
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -211,7 +451,7 @@ def classify(predicted: int, actual: int) -> str:
     return "MISS"
 
 
-def settle(state: dict, pending: dict, actual: int) -> None:
+def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) -> None:
     predicted = pending["predicted"]
     result = classify(predicted, actual)
     before = state["probability"]
@@ -228,7 +468,9 @@ def settle(state: dict, pending: dict, actual: int) -> None:
     state["best_streak"] = max(state["best_streak"], state["streak"])
 
     pool_key = result
-    if result == "MISS":
+    if hourly_manip:
+        pool_key = "MANIP_HOURLY"
+    elif result == "MISS":
         pool_key = "MISS_LOW" if actual < predicted else "MISS_HIGH"
     note = random.Random(pending["for_date"]).choice(NOTES[pool_key])
 
@@ -238,6 +480,7 @@ def settle(state: dict, pending: dict, actual: int) -> None:
             "predicted": predicted,
             "actual": actual,
             "result": result,
+            "hourly_manip": hourly_manip,
             "delta": round(after - before, 2),
             "prob_before": before,
             "probability": after,
@@ -393,12 +636,20 @@ def render_svg(state: dict) -> str:
     o.append(f'<rect x="32" y="202" width="{bw:.0f}" height="28" rx="6" fill="{label_col}" fill-opacity="0.14" stroke="{label_col}"/>')
     o.append(_t(44, 221, badge, 13, label_col, "bold"))
 
+    # Stats row (NEW)
+    o.append(_t(32, 250, stats_line(hist, state["best_streak"]), 12, MUTED))
+
     if pend:
-        o.append(_t(32, 260, f"Today's call: {pend['predicted']} commit{'s' if pend['predicted'] != 1 else ''}", 14, TEXT))
-        o.append(_t(32, 279, f"(7-day avg {pend['avg7']}, settles 00:00 IST)", 12, MUTED))
+        o.append(_t(32, 274, f"Today's call: {pend['predicted']} commit{'s' if pend['predicted'] != 1 else ''}", 14, TEXT))
+        o.append(_t(32, 293, f"(7-day avg {pend['avg7']}, settles 00:00 IST)", 12, MUTED))
     else:
-        o.append(_t(32, 260, "Today's call: pending", 14, TEXT))
-    o.append(_t(32, 298, f"Streak: {state['streak']} correct  ·  best {state['best_streak']}", 12, MUTED))
+        o.append(_t(32, 274, "Today's call: pending", 14, TEXT))
+    o.append(_t(32, 312, f"Streak: {state['streak']} correct  ·  best {state['best_streak']}", 12, MUTED))
+
+    # Visitor votes (NEW)
+    vis = state.get("visitors", {"hit": 0, "miss": 0})
+    if vis.get("hit", 0) or vis.get("miss", 0):
+        o.append(_t(32, 330, f"Visitor votes: {vis.get('hit', 0)} 👍 / {vis.get('miss', 0)} 👎", 11, MUTED))
 
     # Right column: sparkline + bars
     o.append(_t(430, 90, "PROBABILITY · LAST 30 SESSIONS", 12, MUTED, style='letter-spacing="1"'))
@@ -407,12 +658,12 @@ def render_svg(state: dict) -> str:
     o.append(_bars(hist[-7:], 430, 292, 358, 46))
 
     # Footer
-    o.append(f'<line x1="32" y1="318" x2="788" y2="318" stroke="{GRID}" stroke-width="1"/>')
+    o.append(f'<line x1="32" y1="346" x2="788" y2="346" stroke="{GRID}" stroke-width="1"/>')
     for i, ln in enumerate(note_lines):
-        o.append(_t(32, 342 + i * 18, ("“" if i == 0 else "") + ln + ("”" if i == len(note_lines) - 1 else ""),
-                    14, AMBER, style='font-style="italic"'))
-    o.append(_t(32, 380, "Not financial advice. Also not a job guarantee.", 11, MUTED))
-    o.append(_t(788, 380, "updated daily by a GitHub Action", 11, MUTED, anchor="end"))
+        o.append(_t(32, 366 + i * 16, ("“" if i == 0 else "") + ln + ("”" if i == len(note_lines) - 1 else ""),
+                    13, AMBER, style='font-style="italic"'))
+    o.append(_t(32, 388, "Not financial advice. Also not a job guarantee.", 11, MUTED))
+    o.append(_t(788, 388, "updated daily by a GitHub Action", 11, MUTED, anchor="end"))
     o.append("</svg>")
     return "\n".join(o)
 
@@ -435,13 +686,29 @@ def render_block(state: dict) -> str:
         "",
     ]
 
+    # Stats line (NEW)
+    s = stats(state["history"], state["best_streak"])
+    if s["n"] > 0:
+        lines += [f"*{stats_line(state['history'], state['best_streak'])}*", ""]
+
+    # Monthly wrap (NEW)
+    if state.get("monthly_wrap_note"):
+        lines += [f"> 📊 {state['monthly_wrap_note']}", ""]
+        state.pop("monthly_wrap_note", None)
+
+    # Visitor votes summary (NEW)
+    vis = state.get("visitors", {"hit": 0, "miss": 0})
+    if vis.get("hit", 0) or vis.get("miss", 0):
+        lines += [f"*Visitors: {vis.get('hit', 0)} 👍 / {vis.get('miss', 0)} 👎 votes — [vote on today's forecast](../../issues)*", ""]
+
     rows = []
     pend = state.get("pending")
     if pend:
         rows.append(f"| **{pend['for_date']}** (today) | {pend['predicted']} | ⏳ | Market open | | |")
-    for e in reversed(state["history"][-5:]):
+    for e in reversed(state["history"][-README_ROWS:]):
+        manip_flag = " 🚨" if e.get("hourly_manip") else ""
         rows.append(
-            f"| {e['date']} | {e['predicted']} | {e['actual']} | {RESULT_LABEL[e['result']]} "
+            f"| {e['date']} | {e['predicted']} | {e['actual']} | {RESULT_LABEL[e['result']]}{manip_flag} "
             f"| {e['delta']:+.2f} | {e['probability']:.2f}% |"
         )
     if rows:
@@ -461,6 +728,9 @@ def render_block(state: dict) -> str:
         f"- Exact hit: **+{REWARD_EXACT:g}** pts. Off by one: **+{REWARD_NEAR:g}** pts. Streaks add a small bonus.",
         f"- Miss: **{PENALTY_MISS:g}** pts. Zero commits after predicting some: **{PENALTY_CRASH:g}** pts.",
         f"- {MANIP_MIN_COMMITS}+ commits and {MANIP_MULTIPLIER}x the forecast counts as market manipulation: **{PENALTY_MANIP:g}** pts.",
+        f"- {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes is hourly manipulation: **{PENALTY_MANIP:g}** pts.",
+        "- **Visitors:** 👍/👎 on today's [voting issue](../../issues) to predict whether the bot hits. No prize, just bragging rights.",
+        "- **Monthly:** on the 1st, an earnings report summarises the previous month.",
         "- Probability is 100% fiction. The 100% real part: I actually ship code, and I'm actually looking for a job.",
         "",
         "</details>",
@@ -512,12 +782,56 @@ def main() -> None:
             counts = fetch_commit_counts(args.login, wanted_sorted, token)
 
         if needs_settle:
-            settle(state, pending, counts[date.fromisoformat(pending["for_date"])])
+            settle_date = date.fromisoformat(pending["for_date"])
+            actual = counts[settle_date]
+
+            # Hourly manipulation check (REST API, best-effort)
+            hourly_manip = False
+            if not args.mock:
+                try:
+                    ts = fetch_commit_timestamps(args.login, settle_date, token)
+                    hourly_manip = is_hourly_manipulation(ts)
+                except Exception as e:
+                    print(f"  hourly check skipped: {e}", file=sys.stderr)
+            else:
+                hourly_manip = mock_hourly_manipulation(actual, pending["for_date"])
+
+            settle(state, pending, actual, hourly_manip=hourly_manip)
+
+            # Settle visitor votes
+            if not args.mock:
+                state["_repo"] = f"{args.login}/{args.login}"
+                state["_last_vote_predicted"] = pending["predicted"]
+                settle_visitor_votes(state, actual, token)
+            else:
+                # Simulate deterministic visitor votes in mock mode
+                visitors = state.setdefault("visitors", {"hit": 0, "miss": 0, "correct": 0})
+                rng = random.Random(f"votes-{pending['for_date']}")
+                visitors["hit"] += rng.randint(0, 6)
+                visitors["miss"] += rng.randint(0, 6)
+
             state["pending"] = None
 
         if not state.get("pending"):
             predicted, avg = predict(counts, today)
             state["pending"] = {"for_date": today.isoformat(), "predicted": predicted, "avg7": avg}
+
+        # Monthly wrap-up (NEW)
+        wrap = monthly_wrap(state, today)
+        if wrap:
+            state["monthly_wrap_note"] = wrap
+            print(f"  monthly wrap: {wrap}")
+
+        # Create today's visitor voting issue (NEW)
+        if not args.mock:
+            token = os.environ.get("GH_TOKEN")
+            if token and args.login:
+                state["_repo"] = f"{args.login}/{args.login}"
+                create_vote_issue(state, token, args.login)
+
+        # Clean up internal keys before saving
+        state.pop("_repo", None)
+        state.pop("_last_vote_predicted", None)
 
         state["opened"] = state["opened"] or today.isoformat()
         state["updated"] = today.isoformat()

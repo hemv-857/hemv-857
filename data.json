@@ -8,5 +8,12 @@
   "last_result": null,
   "last_delta": 0.0,
   "last_note": null,
-  "history": []
+  "history": [],
+  "visitors": {
+    "hit": 0,
+    "miss": 0,
+    "correct": 0
+  },
+  "vote_issue": null,
+  "monthly_wrap": null
 }

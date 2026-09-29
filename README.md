@@ -20,6 +20,9 @@ Software developer. I write code, occasionally it works.
 - Exact hit: **+1** pts. Off by one: **+0.5** pts. Streaks add a small bonus.
 - Miss: **-0.25** pts. Zero commits after predicting some: **-0.5** pts.
 - 10+ commits and 3x the forecast counts as market manipulation: **-1.5** pts.
+- 10+ commits within 60 minutes is hourly manipulation: **-1.5** pts.
+- **Visitors:** 👍/👎 on today's [voting issue](../../issues) to predict whether the bot hits. No prize, just bragging rights.
+- **Monthly:** on the 1st, an earnings report summarises the previous month.
 - Probability is 100% fiction. The 100% real part: I actually ship code, and I'm actually looking for a job.
 
 </details>

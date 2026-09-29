@@ -13,14 +13,15 @@
 <text x="32" y="184" font-size="16" fill="#8b949e" font-weight="normal" text-anchor="start" >■ 0.00 pts  ·  IPO DAY</text>
 <rect x="32" y="202" width="237" height="28" rx="6" fill="#f85149" fill-opacity="0.14" stroke="#f85149"/>
 <text x="44" y="221" font-size="13" fill="#f85149" font-weight="bold" text-anchor="start" >ANALYST RATING: STRONG SELL</text>
-<text x="32" y="260" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >Today's call: pending</text>
-<text x="32" y="298" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >Streak: 0 correct  ·  best 0</text>
+<text x="32" y="250" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >No sessions yet — market opens tomorrow.</text>
+<text x="32" y="274" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >Today's call: pending</text>
+<text x="32" y="312" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >Streak: 0 correct  ·  best 0</text>
 <text x="430" y="90" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PROBABILITY · LAST 30 SESSIONS</text>
 <line x1="430" y1="106.0" x2="788" y2="106.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="148.0" x2="788" y2="148.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="190.0" x2="788" y2="190.0" stroke="#21262d" stroke-width="1"/><text x="609.0" y="152.0" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="middle" >Not enough data yet. Market just opened.</text>
 <text x="430" y="226" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PREDICTED (GREY) VS ACTUAL · LAST 7</text>
 <text x="609.0" y="269.0" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="middle" >Awaiting first settlement (tomorrow 00:05 IST).</text>
-<line x1="32" y1="318" x2="788" y2="318" stroke="#21262d" stroke-width="1"/>
-<text x="32" y="342" font-size="14" fill="#d29922" font-weight="normal" text-anchor="start" font-style="italic">“Exchange opens today. Listing price: optimistic. Fundamentals: pending.”</text>
-<text x="32" y="380" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >Not financial advice. Also not a job guarantee.</text>
-<text x="788" y="380" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="end" >updated daily by a GitHub Action</text>
+<line x1="32" y1="346" x2="788" y2="346" stroke="#21262d" stroke-width="1"/>
+<text x="32" y="366" font-size="13" fill="#d29922" font-weight="normal" text-anchor="start" font-style="italic">“Exchange opens today. Listing price: optimistic. Fundamentals: pending.”</text>
+<text x="32" y="388" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >Not financial advice. Also not a job guarantee.</text>
+<text x="788" y="388" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="end" >updated daily by a GitHub Action</text>
 </svg>
