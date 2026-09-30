@@ -1,7 +1,6 @@
-# Hi, I'm Hemang Varshney
+# Hi, I'm Hemang Varshney 👋
 
-<!-- Replace this section with your own intro: role, stack, what you're building. -->
-Software developer. I write code, occasionally it works.
+Software developer working across quant finance, real-time systems, and AI tooling. I write code; occasionally it works.
 
 ## 📈 Live: my chances of getting hired
 
@@ -36,7 +35,36 @@ Software developer. I write code, occasionally it works.
 
 ## 🛠 Stack
 
-<!-- your badges / skills here -->
+**Languages**
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-DEA584?style=flat-square&logo=rust&logoColor=black)
+
+**Frameworks & Tools**
+
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![D3.js](https://img.shields.io/badge/D3.js-F9A03C?style=flat-square&logo=d3.js&logoColor=black)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+
+**AI & Data**
+
+![LLM](https://img.shields.io/badge/LLM_%2F_RAG-FF6B6B?style=flat-square)
+![Qdrant](https://img.shields.io/badge/Qdrant-DC244C?style=flat-square&logo=qdrant&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-9B59B6?style=flat-square)
+![WebSocket](https://img.shields.io/badge/WebSocket-RealTime-4CAF50?style=flat-square)
+
+**Domains**
+
+![Quant Finance](https://img.shields.io/badge/Quant_Finance-Options_%7C_Backtesting_%7C_Microstructure-FFD700?style=flat-square&labelColor=333)
+![Fintech](https://img.shields.io/badge/Fintech-Payments_%7C_Risk-26A69A?style=flat-square&labelColor=333)
+![Security](https://img.shields.io/badge/Security-Audit_%7C_MCP-f85149?style=flat-square&labelColor=333)
 
 ## 📫 Reach me
 
