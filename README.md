@@ -1,8 +1,13 @@
-# Hi, I'm Hemang Varshney 👋
+<h1 align="center">Hi, I'm Hemang Varshney 👋</h1>
 
-Software developer working across quant finance, real-time systems, and AI tooling. I write code; occasionally it works.
+<p align="center">
+  Software developer working across quant finance, real-time systems, and AI tooling.<br>
+  I write code; occasionally it works.
+</p>
 
-## 📈 Live: my chances of getting hired
+<p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
+
+<h2 align="center">📈 Live: my chances of getting hired</h2>
 
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
@@ -11,7 +16,7 @@ Software developer working across quant finance, real-time systems, and AI tooli
 
 </div>
 
-<br><br>
+<br>
 
 | Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
@@ -26,48 +31,56 @@ Software developer working across quant finance, real-time systems, and AI tooli
 - Miss: **-0.25** pts. Zero commits after predicting some: **-0.5** pts.
 - 10+ commits and 3x the forecast counts as market manipulation: **-1.5** pts.
 - 10+ commits within 60 minutes is hourly manipulation: **-1.5** pts.
-- **Visitors:** 👍/👎 on today's [voting issue](../../issues) to predict whether the bot hits. No prize, just bragging rights.
+- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.
 - **Monthly:** on the 1st, an earnings report summarises the previous month.
 - Probability is 100% fiction. The 100% real part: I actually ship code, and I'm actually looking for a job.
 
 </details>
 <!--HIRE_EXCHANGE:END-->
 
-<!-- Everything between the two markers above is rewritten by the bot. Don't edit it by hand. -->
+<p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
 
-## 🛠 Stack
+<h2 align="center">🛠 Stack</h2>
 
-**Languages**
+<p align="center"><b>Languages</b></p>
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Rust](https://img.shields.io/badge/Rust-DEA584?style=flat-square&logo=rust&logoColor=black)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&amp;logo=typescript&amp;logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Rust-DEA584?style=flat-square&amp;logo=rust&amp;logoColor=black" alt="Rust">
+</p>
 
-**Frameworks & Tools**
+<p align="center"><b>Frameworks &amp; Tools</b></p>
 
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
-![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-![D3.js](https://img.shields.io/badge/D3.js-F9A03C?style=flat-square&logo=d3.js&logoColor=black)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+<p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&amp;logo=fastapi&amp;logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&amp;logo=next.js&amp;logoColor=white" alt="Next.js">
+  <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&amp;logo=react&amp;logoColor=black" alt="React">
+  <img src="https://img.shields.io/badge/Prisma-2D3748?style=flat-square&amp;logo=prisma&amp;logoColor=white" alt="Prisma">
+  <img src="https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&amp;logo=tailwindcss&amp;logoColor=white" alt="Tailwind CSS">
+  <img src="https://img.shields.io/badge/D3.js-F9A03C?style=flat-square&amp;logo=d3.js&amp;logoColor=black" alt="D3.js">
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&amp;logo=redis&amp;logoColor=white" alt="Redis">
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&amp;logo=postgresql&amp;logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white" alt="Docker">
+</p>
 
-**AI & Data**
+<p align="center"><b>AI &amp; Data</b></p>
 
-![LLM](https://img.shields.io/badge/LLM_%2F_RAG-FF6B6B?style=flat-square)
-![Qdrant](https://img.shields.io/badge/Qdrant-DC244C?style=flat-square&logo=qdrant&logoColor=white)
-![MCP](https://img.shields.io/badge/MCP-9B59B6?style=flat-square)
-![WebSocket](https://img.shields.io/badge/WebSocket-RealTime-4CAF50?style=flat-square)
+<p align="center">
+  <img src="https://img.shields.io/badge/LLM_%2F_RAG-FF6B6B?style=flat-square" alt="LLM">
+  <img src="https://img.shields.io/badge/Qdrant-DC244C?style=flat-square&amp;logo=qdrant&amp;logoColor=white" alt="Qdrant">
+  <img src="https://img.shields.io/badge/MCP-9B59B6?style=flat-square" alt="MCP">
+  <img src="https://img.shields.io/badge/WebSocket-RealTime-4CAF50?style=flat-square" alt="WebSocket">
+</p>
 
-**Domains**
+<p align="center"><b>Domains</b></p>
 
-![Quant Finance](https://img.shields.io/badge/Quant_Finance-Options_%7C_Backtesting_%7C_Microstructure-FFD700?style=flat-square&labelColor=333)
-![Fintech](https://img.shields.io/badge/Fintech-Payments_%7C_Risk-26A69A?style=flat-square&labelColor=333)
-![Security](https://img.shields.io/badge/Security-Audit_%7C_MCP-f85149?style=flat-square&labelColor=333)
+<p align="center">
+  <img src="https://img.shields.io/badge/Quant_Finance-Options_%7C_Backtesting_%7C_Microstructure-FFD700?style=flat-square&amp;labelColor=333" alt="Quant Finance">
+  <img src="https://img.shields.io/badge/Fintech-Payments_%7C_Risk-26A69A?style=flat-square&amp;labelColor=333" alt="Fintech">
+  <img src="https://img.shields.io/badge/Security-Audit_%7C_MCP-f85149?style=flat-square&amp;labelColor=333" alt="Security">
+</p>
 
-## 📫 Reach me
+<p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
 
-<!-- email / LinkedIn / portfolio: recruiters, this is the part that matters -->
+<h2 align="center">📫 Reach me</h2>

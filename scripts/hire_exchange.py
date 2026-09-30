@@ -684,7 +684,7 @@ def render_block(state: dict) -> str:
         "",
         "</div>",
         "",
-        "<br><br>",
+        "<br>",
         "",
     ]
 
@@ -701,7 +701,7 @@ def render_block(state: dict) -> str:
     # Visitor votes summary (NEW)
     vis = state.get("visitors", {"hit": 0, "miss": 0})
     if vis.get("hit", 0) or vis.get("miss", 0):
-        lines += [f"*Visitors: {vis.get('hit', 0)} 👍 / {vis.get('miss', 0)} 👎 votes — [vote on today's forecast](../../issues)*", ""]
+        lines += [f"*Visitors: {vis.get('hit', 0)} 👍 / {vis.get('miss', 0)} 👎 votes — [vote on today's forecast](https://github.com/hemv-857/hemv-857/issues)*", ""]
 
     rows = []
     pend = state.get("pending")
@@ -731,7 +731,7 @@ def render_block(state: dict) -> str:
         f"- Miss: **{PENALTY_MISS:g}** pts. Zero commits after predicting some: **{PENALTY_CRASH:g}** pts.",
         f"- {MANIP_MIN_COMMITS}+ commits and {MANIP_MULTIPLIER}x the forecast counts as market manipulation: **{PENALTY_MANIP:g}** pts.",
         f"- {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes is hourly manipulation: **{PENALTY_MANIP:g}** pts.",
-        "- **Visitors:** 👍/👎 on today's [voting issue](../../issues) to predict whether the bot hits. No prize, just bragging rights.",
+        "- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.",
         "- **Monthly:** on the 1st, an earnings report summarises the previous month.",
         "- Probability is 100% fiction. The 100% real part: I actually ship code, and I'm actually looking for a job.",
         "",
