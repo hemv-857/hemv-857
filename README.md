@@ -11,6 +11,7 @@ Software developer working across quant finance, real-time systems, and AI tooli
 
 </div>
 
+<br><br>
 
 | Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|

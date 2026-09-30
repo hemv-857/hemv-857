@@ -684,6 +684,7 @@ def render_block(state: dict) -> str:
         "",
         "</div>",
         "",
+        "<br><br>",
         "",
     ]
 
