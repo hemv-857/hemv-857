@@ -11,6 +11,7 @@ Software developer working across quant finance, real-time systems, and AI tooli
 
 </div>
 
+
 | Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
 | **2026-09-30** (today) | 39 | ⏳ | Market open | | |
