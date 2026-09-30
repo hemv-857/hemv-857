@@ -1,28 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="820" height="392" viewBox="0 0 820 392" role="img" aria-labelledby="t d" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">
-<title id="t">Hire probability: 0.42%</title>
+<title id="t">Hire probability: 0.17%</title>
 <desc id="d">Live "hire probability" exchange. Analyst rating STRONG SELL. Current streak 0 correct predictions. Not financial advice.</desc>
 <rect x="0.5" y="0.5" width="819" height="391" rx="14" fill="#0d1117" stroke="#30363d"/>
 <text x="32" y="40" font-size="20" fill="#3fb950" font-weight="bold" text-anchor="start" >$HIRED</text>
 <text x="132" y="40" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="start" >HIRE PROBABILITY EXCHANGE</text>
 <circle cx="622" cy="35" r="4" fill="#3fb950"><animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>
 <text x="632" y="40" font-size="12" fill="#3fb950" font-weight="bold" text-anchor="start" >LIVE</text>
-<text x="788" y="40" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="end" >2026-09-30 IST</text>
+<text x="788" y="40" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="end" >2026-10-01 IST</text>
 <line x1="32" y1="56" x2="788" y2="56" stroke="#21262d" stroke-width="1"/>
 <text x="32" y="90" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">HIRE PROBABILITY</text>
-<text x="32" y="152" font-size="64" fill="#f0f6fc" font-weight="bold" text-anchor="start" >0.42%</text>
-<text x="32" y="184" font-size="16" fill="#8b949e" font-weight="normal" text-anchor="start" >■ 0.00 pts  ·  IPO DAY</text>
+<text x="32" y="152" font-size="64" fill="#f0f6fc" font-weight="bold" text-anchor="start" >0.17%</text>
+<text x="32" y="184" font-size="18" font-weight="bold" fill="#f85149">▼ -0.25<tspan fill="#8b949e" font-weight="normal" font-size="14"> pts  ·  MISS</tspan></text>
 <rect x="32" y="202" width="237" height="28" rx="6" fill="#f85149" fill-opacity="0.14" stroke="#f85149"/>
 <text x="44" y="221" font-size="13" fill="#f85149" font-weight="bold" text-anchor="start" >ANALYST RATING: STRONG SELL</text>
-<text x="32" y="250" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >No sessions yet — market opens tomorrow.</text>
-<text x="32" y="274" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >Today's call: 39 commits</text>
-<text x="32" y="293" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >(7-day avg 38.71, settles 00:00 IST)</text>
+<text x="32" y="250" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >1 sessions · 0% hit rate · best streak 0 · 0 exact / 0 near / 1 miss</text>
+<text x="32" y="274" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >Today's call: 22 commits</text>
+<text x="32" y="293" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >(7-day avg 22.29, settles 00:00 IST)</text>
 <text x="32" y="312" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >Streak: 0 correct  ·  best 0</text>
 <text x="430" y="90" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PROBABILITY · LAST 30 SESSIONS</text>
-<line x1="430" y1="106.0" x2="788" y2="106.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="148.0" x2="788" y2="148.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="190.0" x2="788" y2="190.0" stroke="#21262d" stroke-width="1"/><text x="609.0" y="152.0" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="middle" >Not enough data yet. Market just opened.</text>
+<line x1="430" y1="106.0" x2="788" y2="106.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="148.0" x2="788" y2="148.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="190.0" x2="788" y2="190.0" stroke="#21262d" stroke-width="1"/><polygon points="430,190 430.0,131.1 788.0,164.9 788,190" fill="#f85149" opacity="0.12"/><polyline points="430.0,131.1 788.0,164.9" fill="none" stroke="#f85149" stroke-width="2" stroke-linejoin="round"/><circle cx="788.0" cy="164.9" r="4" fill="#f85149"/><text x="788" y="102" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="end" >hi 0.42%</text><text x="788" y="202" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="end" >lo 0.17%</text>
 <text x="430" y="226" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PREDICTED (GREY) VS ACTUAL · LAST 7</text>
-<text x="609.0" y="269.0" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="middle" >Awaiting first settlement (tomorrow 00:05 IST).</text>
+<line x1="430" y1="292" x2="788" y2="292" stroke="#21262d" stroke-width="1"/><rect x="744.9" y="246.0" width="14" height="46.0" rx="2" fill="#484f58"/><text x="751.9" y="243.0" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >39</text><rect x="762.9" y="277.8" width="14" height="14.2" rx="2" fill="#f85149"/><text x="769.9" y="274.8" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >12</text><text x="762.4" y="305" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >Wed</text>
 <line x1="32" y1="346" x2="788" y2="346" stroke="#21262d" stroke-width="1"/>
-<text x="32" y="366" font-size="13" fill="#d29922" font-weight="normal" text-anchor="start" font-style="italic">“Exchange opens today. Listing price: optimistic. Fundamentals: pending.”</text>
+<text x="32" y="366" font-size="13" fill="#d29922" font-weight="normal" text-anchor="start" font-style="italic">“Bearish day. Stack Overflow was consulted, no commits were made.”</text>
 <text x="32" y="388" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >Not financial advice. Also not a job guarantee.</text>
 <text x="788" y="388" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="end" >updated daily by a GitHub Action</text>
 </svg>

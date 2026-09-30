@@ -12,15 +12,20 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=20260930" alt="Hire probability 0.42% (analyst rating: STRONG SELL). Streak: 0." width="820">
+<img src="assets/ticker.svg?v=20261001" alt="Hire probability 0.17% (analyst rating: STRONG SELL). Streak: 0." width="820">
 
 </div>
 
 <br>
 
+*1 sessions · 0% hit rate · best streak 0 · 0 exact / 0 near / 1 miss*
+
+> 📊 2026-09 earnings report: 1 sessions, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
+
 | Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-09-30** (today) | 39 | ⏳ | Market open | | |
+| **2026-10-01** (today) | 22 | ⏳ | Market open | | |
+| 2026-09-30 | 39 | 12 | ❌ Miss | -0.25 | 0.17% |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>
