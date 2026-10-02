@@ -3,15 +3,15 @@
   "streak": 0,
   "best_streak": 0,
   "opened": "2026-09-30",
-  "updated": "2026-10-02",
+  "updated": "2026-10-03",
   "pending": {
-    "for_date": "2026-10-02",
-    "predicted": 11,
-    "avg7": 11.29
+    "for_date": "2026-10-03",
+    "predicted": 20,
+    "avg7": 19.86
   },
-  "last_result": "MISS",
-  "last_delta": -0.12,
-  "last_note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde.",
+  "last_result": "MANIP",
+  "last_delta": 0.0,
+  "last_note": "Suspicious volume spike. Empty commits are not a personality.",
   "history": [
     {
       "date": "2026-09-30",
@@ -34,6 +34,17 @@
       "prob_before": 0.17,
       "probability": 0.05,
       "note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde."
+    },
+    {
+      "date": "2026-10-02",
+      "predicted": 11,
+      "actual": 40,
+      "result": "MANIP",
+      "hourly_manip": false,
+      "delta": 0.0,
+      "prob_before": 0.05,
+      "probability": 0.05,
+      "note": "Suspicious volume spike. Empty commits are not a personality."
     }
   ],
   "visitors": {
@@ -41,7 +52,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 3,
+  "vote_issue": 4,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 sessions, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed."
 }
