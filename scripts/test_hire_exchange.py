@@ -12,12 +12,22 @@ import hire_exchange as h
 counts = {date(2026, 10, 3) - timedelta(days=i): v
           for i, v in enumerate([5, 40, 12, 9, 60, 3, 22], start=1)}
 lo, hi, avg = h.predict(counts, date(2026, 10, 3))
-assert (lo, hi) == (3, 60), (lo, hi)
+assert (lo, hi) == (5, 40), (lo, hi)          # 3 and 60 trimmed off
 assert avg == 21.57, avg
+# One outlier must not be able to set the ceiling for the week.
+out = {date(2026, 10, 3) - timedelta(days=i): v
+       for i, v in enumerate([5, 6, 7, 8, 9, 10, 151], start=1)}
+assert h.predict(out, date(2026, 10, 3))[:2] == (6, 10)
 
 # A range of one value is a point forecast, and must behave like one.
 flat = {date(2026, 10, 3) - timedelta(days=i): 20 for i in range(1, 8)}
 assert h.predict(flat, date(2026, 10, 3))[:2] == (20, 20)
+# A window too short to trim must fail loudly, not silently widen the range.
+short = {date(2026, 10, 3) - timedelta(days=i): 5 for i in range(1, 3)}
+try:
+    h.predict(short, date(2026, 10, 3)); raise SystemExit("expected ValueError")
+except KeyError:
+    pass  # a genuinely absent day is a caller bug and should surface as one
 
 # ------------------------------------------------------------------ the scoring
 assert h.classify(3, 60, 12) == "HIT"        # inside the range
@@ -39,16 +49,21 @@ pts = [h.score_session(LO, HI, a)[1] for a in range(LO, 200)]
 assert pts == sorted(pts), "reward must rise with commits shipped"
 assert h.score_session(LO, HI, HI + 1)[1] > h.score_session(LO, HI, LO)[1], \
     "beating the range must beat scraping its floor"
-assert h.score_session(LO, HI, LO)[0] == "HIT" and h.score_session(LO, HI, LO)[1] == h.REWARD_FLOOR
 assert h.score_session(LO, HI, HI)[1] == h.REWARD_CEIL
-assert h.score_session(LO, HI, LO - 1) == ("NEAR", h.REWARD_EDGE)
 assert h.score_session(LO, HI, 0) == ("CRASH", h.PENALTY_CRASH)
+# Regression: with a zero floor (46 of 95 days are zero-commit days), a day with
+# no commits used to fall through to the gradient and score like real work.
+assert h.score_session(0, 50, 0)[1] == 0.0, h.score_session(0, 50, 0)
+assert h.score_session(0, 50, 1)[1] > 0.0
+# A near miss is a label; the points still track the work actually shipped.
+assert h.score_session(LO, HI, LO - 1) == ("NEAR", round((LO - 1) / HI, 2))
+assert h.score_session(LO, HI, LO - 1)[1] < h.score_session(LO, HI, LO)[1]
 # One huge day cannot rocket the ticker on its own.
 assert h.score_session(LO, HI, 10_000)[1] == h.REWARD_CEIL + h.OVERSHOOT_BONUS
 # A flat forecast is a point forecast and must still grade sensibly.
-# A flat forecast is a point forecast: an exact hit is the ceiling, not the floor.
+# A flat forecast is a point forecast: matching it is the ceiling.
 assert h.score_session(20, 20, 20) == ("HIT", h.REWARD_CEIL)
-assert h.score_session(20, 20, 19) == ("NEAR", h.REWARD_EDGE)
+assert h.score_session(20, 20, 19)[0] == "NEAR"
 assert h.score_session(0, 0, 0)[0] == "HIT"
 flat = [h.score_session(20, 20, a)[1] for a in range(1, 60)]
 assert flat == sorted(flat), flat

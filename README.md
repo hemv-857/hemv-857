@@ -12,32 +12,32 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=a7be1f04" alt="Hire probability 3.37% (analyst rating: SELL). 135 commits in 4 sessions · 34/day · never missed a day. Streak: 4." width="640">
+<img src="assets/ticker.svg?v=9b35c079" alt="Hire probability 3.51% (analyst rating: SELL). 135 commits in 4 sessions · 34/day · never missed a day. Streak: 4." width="640">
 
 </div>
 
 <br>
 
-*4 sessions · 100% hit rate · best streak 4 · 4 exact / 0 near / 0 beat / 0 miss*
+*4 sessions · 100% hit rate · best streak 4 · 1 exact / 1 near / 2 beat / 0 miss*
 
 > 📊 2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
 | Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-10-04** (today) | 4–50 | ⏳ | Market open | | |
-| 2026-10-03 | 4–50 | 38 | ✅ Exact hit | +0.87 | 3.37% |
-| 2026-10-02 | 4–50 | 43 | ✅ Exact hit | +0.92 | 2.50% |
-| 2026-10-01 | 4–50 | 4 | ✅ Exact hit | +0.50 | 1.58% |
-| 2026-09-30 | 4–151 | 50 | ✅ Exact hit | +0.66 | 1.08% |
+| **2026-10-04** (today) | 11–43 | ⏳ | Market open | | |
+| 2026-10-03 | 11–43 | 38 | ✅ Exact hit | +0.88 | 3.51% |
+| 2026-10-02 | 4–42 | 43 | 🚀 Beat | +1.01 | 2.63% |
+| 2026-10-01 | 5–42 | 4 | 🟢 Near hit | +0.10 | 1.62% |
+| 2026-09-30 | 5–42 | 50 | 🚀 Beat | +1.10 | 1.52% |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>
 
-- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last 7 days. Anything inside is a hit — roughly 4 days in 5.
+- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the 7 day trailing window, trimmed — the smallest and largest are dropped, so one monster day can’t turn every forecast into a shrug. It lands about half the time.
 - Counts are the commits that still exist on my repos' default branches, so `git log` agrees with me. GitHub's contribution graph never retracts a commit — rebased and amended work stays counted forever, and it claimed 74 for a day with 38 commits in it.
 - The next midnight it fetches my **real** commit count and settles the trade.
-- The reward follows the work, not the accuracy: **0.5** pts for landing anywhere on the bottom of the range, **1** for the top, and up to **1.5** for beating it. Streaks add a small bonus.
-- Coming in 1 under the range is **0.25** pts, further under is **-0.25**, and zero commits on a day that expected work is **-0.5**.
+- Points follow the work: **0** for a day with no commits, up to **1** for matching the top of the range, and up to **1.5** for beating it. Streaks add a small bonus.
+- Landing inside the range is a hit, 1 under is a near miss, further under is **-0.25**, and no commits on a day that expected work is **-0.5**.
 - Shipping more is never punished. Beating the top of the range is the best possible day, and the score keeps climbing with the overshoot.
 - Market manipulation means one thing only: 10+ commits within 60 minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **-1.5** pts.
 - **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.

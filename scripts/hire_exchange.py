@@ -47,12 +47,9 @@ START_PROB = 0.42          # listing price (%)
 PROB_MIN, PROB_MAX = 0.05, 99.90
 
 TOLERANCE = 1              # within this many commits of the range edge still counts
-# The reward rises with output, not with accuracy. Landing on the bottom of the
-# forecast range is worth less than landing on its top, and beating the top is
-# worth more again - shipping more must never score less.
-REWARD_FLOOR = 0.5         # inside the range, at its bottom
-REWARD_CEIL = 1.0          # inside the range, at its top
-REWARD_EDGE = 0.25         # one commit short of the range floor
+# Points track output, scaled against the top of the forecast range. Nothing is
+# earned for a day with no commits.
+REWARD_CEIL = 1.0          # shipped as much as the top of the range
 OVERSHOOT_BONUS = 0.5      # extra for shipping past the top of the range...
 OVERSHOOT_CAP = 1.0        # ...scaled by how far past, up to this multiple
 PENALTY_MISS = -0.25
@@ -71,7 +68,8 @@ GOOD_RESULTS = ("HIT", "NEAR", "BEAT")
 HOURLY_MANIP_MIN = 10
 HOURLY_WINDOW_MIN = 60
 
-PREDICT_WINDOW_DAYS = 7    # forecast range = min..max over this many trailing days
+PREDICT_WINDOW_DAYS = 7    # forecast range spans this many trailing days
+PREDICT_TRIM = 1           # ...dropping this many days off each end
 HISTORY_KEEP = 120         # settled sessions kept in data.json
 README_ROWS = 14           # history rows shown in the README table
 
@@ -603,42 +601,50 @@ def monthly_wrap(state: dict, today: date) -> str | None:
 # Game logic
 # --------------------------------------------------------------------------- #
 def predict(counts: dict[date, int], today: date) -> tuple[int, int, float]:
-    """Forecast today as a range: the min and max of the trailing 7 observed days.
+    """Forecast today as a trimmed range of the trailing PREDICT_WINDOW_DAYS days.
 
-    A point forecast from a 7-day mean cannot do better than ~10% here: this
-    account's daily volume ranges from ~10 to ~40 commits, so +-1 is
-    arithmetically unreachable. The trailing min-max covers ~78% of days and
-    needs no model to explain: "anything I did in the last week is fair game".
+    The smallest and largest are dropped. Keeping them looked generous but was
+    useless: one 151-commit day in the window pushed the top to 151, the range
+    covered 73% of days at a width of 38, and every session scored as a hit - a
+    forecast that cannot be wrong is not a forecast. Dropping one extreme at each
+    end covers ~45% of days at a width of 14, so the number on the ticker means
+    something.
     """
-    vals = [counts[today - timedelta(days=i)] for i in range(7, 0, -1)]
+    vals = [counts[today - timedelta(days=i)] for i in range(PREDICT_WINDOW_DAYS, 0, -1)]
+    if len(vals) <= 2 * PREDICT_TRIM + 1:
+        raise ValueError(
+            f"PREDICT_WINDOW_DAYS={PREDICT_WINDOW_DAYS} is too short to trim "
+            f"{PREDICT_TRIM} off each end"
+        )
+    vals.sort()
     avg = round(sum(vals) / len(vals), 2)
-    return min(vals), max(vals), avg
+    return vals[PREDICT_TRIM], vals[-1 - PREDICT_TRIM], avg
 
 
 def score_session(lo: int, hi: int, actual: int) -> tuple[str, float]:
     """Label and points for one session.
 
-    Output is the pitch, so the reward is monotonic in `actual` from the range
-    floor upward: the bottom of the range beats missing it, the top beats the
-    bottom, and shipping past the top beats everything. It is capped so one
-    136-commit day cannot rocket the ticker on its own.
+    The label comes from the forecast range; the points come only from how much
+    was actually shipped, relative to the top of that range. Keeping those two
+    separate is the whole trick:
+
+    - The reward is strictly monotonic in `actual`, so more work is never worth
+      less. It used to lerp between two anchors, which meant a day with *zero*
+      commits could score as well as a real one whenever the range floor was 0.
+    - Zero commits earns zero points. Doing nothing pays nothing.
+    - Capped, so a single 151-commit day cannot rocket the ticker on its own.
     """
     if actual == 0 and lo > 0:
         return "CRASH", PENALTY_CRASH
-    below = lo - actual
-    if below > TOLERANCE:
+    if lo - actual > TOLERANCE:
         return "MISS", PENALTY_MISS
-    if below > 0:
-        return "NEAR", REWARD_EDGE
-    if hi == lo:
-        # A flat forecast is a point forecast, so hitting it exactly is the
-        # ceiling - not the floor of a zero-width range.
-        return "HIT", REWARD_CEIL
-    pos = (actual - lo) / (hi - lo)          # 0 at the floor, 1 at the top, >1 above
-    pts = REWARD_FLOOR + (REWARD_CEIL - REWARD_FLOOR) * min(pos, 1.0)
-    if pos > 1:
-        return "BEAT", round(pts + OVERSHOOT_BONUS * min(pos - 1, OVERSHOOT_CAP), 2)
-    return "HIT", round(pts, 2)
+    label = "NEAR" if actual < lo else ("BEAT" if actual > hi else "HIT")
+
+    frac = actual / max(1, hi)                # 1.0 == matched the top of the range
+    pts = REWARD_CEIL * min(frac, 1.0)
+    if frac > 1:
+        pts += OVERSHOOT_BONUS * min(frac - 1, OVERSHOOT_CAP)
+    return label, round(pts, 2)
 
 
 def classify(lo: int, hi: int, actual: int) -> str:
@@ -1006,11 +1012,11 @@ def render_block(state: dict) -> str:
         "<details>",
         "<summary>How does this work? (a.k.a. why is this in my README)</summary>",
         "",
-        f"- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last {PREDICT_WINDOW_DAYS} days. Anything inside is a hit \u2014 roughly 4 days in 5.",
+        f"- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the {PREDICT_WINDOW_DAYS} day trailing window, trimmed \u2014 the smallest and largest are dropped, so one monster day can\u2019t turn every forecast into a shrug. It lands about half the time.",
         "- Counts are the commits that still exist on my repos' default branches, so `git log` agrees with me. GitHub's contribution graph never retracts a commit \u2014 rebased and amended work stays counted forever, and it claimed 74 for a day with 38 commits in it.",
         "- The next midnight it fetches my **real** commit count and settles the trade.",
-        f"- The reward follows the work, not the accuracy: **{REWARD_FLOOR:g}** pts for landing anywhere on the bottom of the range, **{REWARD_CEIL:g}** for the top, and up to **{REWARD_CEIL + OVERSHOOT_BONUS:g}** for beating it. Streaks add a small bonus.",
-        f"- Coming in {TOLERANCE} under the range is **{REWARD_EDGE:g}** pts, further under is **{PENALTY_MISS:g}**, and zero commits on a day that expected work is **{PENALTY_CRASH:g}**.",
+        f"- Points follow the work: **0** for a day with no commits, up to **{REWARD_CEIL:g}** for matching the top of the range, and up to **{REWARD_CEIL + OVERSHOOT_BONUS:g}** for beating it. Streaks add a small bonus.",
+        f"- Landing inside the range is a hit, {TOLERANCE} under is a near miss, further under is **{PENALTY_MISS:g}**, and no commits on a day that expected work is **{PENALTY_CRASH:g}**.",
         "- Shipping more is never punished. Beating the top of the range is the best possible day, and the score keeps climbing with the overshoot.",
         f"- Market manipulation means one thing only: {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **{PENALTY_MANIP:g}** pts.",
         "- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.",
