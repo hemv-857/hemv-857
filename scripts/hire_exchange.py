@@ -97,6 +97,11 @@ NOTES = {
         "Market is bullish. Recruiters remain bearish on reading READMEs.",
         "Called it. Now if only the offer letter would call back.",
     ],
+    "BEAT": [
+        "Beat the forecast by a mile. The model is now upgrading its assumptions.",
+        "Volume above forecast. Recruiters noticed, recruiters are confused.",
+        "Overdelivered. The forecast was simply wrong, and happily so.",
+    ],
     "NEAR": [
         "Off by one, the most relatable bug in history.",
         "Close enough. Like my code, technically within tolerance.",
@@ -135,6 +140,7 @@ NOTES = {
 
 RESULT_LABEL = {
     "HIT": "✅ Exact hit",
+    "BEAT": "🚀 Beat",
     "NEAR": "🟢 Near hit",
     "MISS": "❌ Miss",
     "CRASH": "📉 Crash",
@@ -180,15 +186,17 @@ def save_state(state: dict) -> None:
 def stats(history: list[dict], best_streak: int) -> dict:
     n = len(history)
     if n == 0:
-        return {"n": 0, "hit_rate": 0.0, "exact": 0, "near": 0, "miss": 0, "best_streak": best_streak}
+        return {"n": 0, "hit_rate": 0.0, "exact": 0, "near": 0, "beat": 0, "miss": 0, "best_streak": best_streak}
     exact = sum(e["result"] == "HIT" for e in history)
     near = sum(e["result"] == "NEAR" for e in history)
+    beat = sum(e["result"] == "BEAT" for e in history)
     miss = sum(e["result"] in ("MISS", "CRASH", "MANIP") for e in history)
     return {
         "n": n,
-        "hit_rate": (exact + near) / n,
+        "hit_rate": (exact + near + beat) / n,
         "exact": exact,
         "near": near,
+        "beat": beat,
         "miss": miss,
         "best_streak": best_streak,
     }
@@ -199,7 +207,8 @@ def stats_line(history: list[dict], best_streak: int) -> str:
     if s["n"] == 0:
         return "No sessions yet — market opens tomorrow."
     return (f"{s['n']} sessions · {s['hit_rate']:.0%} hit rate · "
-            f"best streak {s['best_streak']} · {s['exact']} exact / {s['near']} near / {s['miss']} miss")
+            f"best streak {s['best_streak']} · {s['exact']} exact / {s['near']} near / "
+            f"{s['beat']} beat / {s['miss']} miss")
 
 
 # --------------------------------------------------------------------------- #
@@ -438,14 +447,20 @@ def predict(counts: dict[date, int], today: date) -> tuple[int, float]:
 
 
 def classify(predicted: int, actual: int) -> str:
-    """Score the trade. Manipulation is decided by the burst check, not here."""
+    """Score the trade. Manipulation is decided by the burst check, not here.
+
+    Overshooting the forecast is not a miss — on a profile whose entire pitch
+    is volume, shipping more than predicted is the good outcome.
+    """
     if actual == 0 and predicted >= 1:
         return "CRASH"
-    diff = abs(actual - predicted)
+    diff = actual - predicted
     if diff == 0:
         return "HIT"
-    if diff <= TOLERANCE:
+    if abs(diff) <= TOLERANCE:
         return "NEAR"
+    if diff > 0:
+        return "BEAT"
     return "MISS"
 
 
@@ -454,10 +469,11 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
     result = "MANIP" if hourly_manip else classify(predicted, actual)
     before = state["probability"]
 
-    if result in ("HIT", "NEAR"):
+    if result in ("HIT", "NEAR", "BEAT"):
         state["streak"] += 1
         bonus = STREAK_BONUS * min(state["streak"] - 1, STREAK_BONUS_CAP)
-        delta = (REWARD_EXACT if result == "HIT" else REWARD_NEAR) + bonus
+        base = {"HIT": REWARD_EXACT, "NEAR": REWARD_NEAR, "BEAT": REWARD_NEAR}[result]
+        delta = base + bonus
     else:
         state["streak"] = 0
         delta = {"MISS": PENALTY_MISS, "CRASH": PENALTY_CRASH, "MANIP": PENALTY_MANIP}[result]
@@ -509,7 +525,7 @@ def rating(p: float) -> tuple[str, str]:
 FONT = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace"
 BG, BORDER, TEXT, MUTED = "#0d1117", "#30363d", "#f0f6fc", "#8b949e"
 GREEN, RED, AMBER, GRID, BAR_PRED = "#3fb950", "#f85149", "#d29922", "#21262d", "#484f58"
-RESULT_COLOR = {"HIT": GREEN, "NEAR": GREEN, "MISS": RED, "CRASH": RED, "MANIP": AMBER}
+RESULT_COLOR = {"HIT": GREEN, "NEAR": GREEN, "BEAT": GREEN, "MISS": RED, "CRASH": RED, "MANIP": AMBER}
 
 
 def _t(x, y, s, size=13, fill=MUTED, weight="normal", anchor="start", style="") -> str:
@@ -728,6 +744,7 @@ def render_block(state: dict) -> str:
         "- The next midnight it fetches my **real** commit count and settles the trade.",
         f"- Exact hit: **+{REWARD_EXACT:g}** pts. Off by one: **+{REWARD_NEAR:g}** pts. Streaks add a small bonus.",
         f"- Miss: **{PENALTY_MISS:g}** pts. Zero commits after predicting some: **{PENALTY_CRASH:g}** pts.",
+        f"- Beat the forecast by more than {TOLERANCE} commit and the probability **rises**: **+{REWARD_NEAR:g}** pts. Shipping more than predicted is the whole pitch, so overachieving is never a miss.",
         f"- Market manipulation means one thing only: {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **{PENALTY_MANIP:g}** pts.",
         "- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.",
         "- **Monthly:** on the 1st, an earnings report summarises the previous month.",

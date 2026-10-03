@@ -12,20 +12,20 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=81e91c0e" alt="Hire probability 0.05% (analyst rating: STRONG SELL). Streak: 0." width="820">
+<img src="assets/ticker.svg?v=729ab9a3" alt="Hire probability 0.55% (analyst rating: STRONG SELL). Streak: 0." width="820">
 
 </div>
 
 <br>
 
-*3 sessions · 0% hit rate · best streak 0 · 0 exact / 0 near / 3 miss*
+*3 sessions · 33% hit rate · best streak 0 · 0 exact / 0 near / 1 beat / 2 miss*
 
 > 📊 2026-09 earnings report: 1 sessions, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
 | Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
 | **2026-10-03** (today) | 20 | ⏳ | Market open | | |
-| 2026-10-02 | 11 | 40 | ❌ Miss | -0.25 | 0.05% |
+| 2026-10-02 | 11 | 40 | 🚀 Beat | +0.50 | 0.55% |
 | 2026-10-01 | 22 | 9 | ❌ Miss | -0.25 | 0.05% |
 | 2026-09-30 | 39 | 12 | ❌ Miss | -0.25 | 0.17% |
 
@@ -36,6 +36,7 @@
 - The next midnight it fetches my **real** commit count and settles the trade.
 - Exact hit: **+1** pts. Off by one: **+0.5** pts. Streaks add a small bonus.
 - Miss: **-0.25** pts. Zero commits after predicting some: **-0.5** pts.
+- Beat the forecast by more than 1 commit and the probability **rises**: **+0.5** pts. Shipping more than predicted is the whole pitch, so overachieving is never a miss.
 - Market manipulation means one thing only: 10+ commits within 60 minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **-1.5** pts.
 - **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.
 - **Monthly:** on the 1st, an earnings report summarises the previous month.

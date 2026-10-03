@@ -1,5 +1,5 @@
 {
-  "probability": 0.05,
+  "probability": 0.55,
   "streak": 0,
   "best_streak": 0,
   "opened": "2026-09-30",
@@ -9,9 +9,9 @@
     "predicted": 20,
     "avg7": 19.86
   },
-  "last_result": "MISS",
-  "last_delta": -0.25,
-  "last_note": "Too many commits. Productivity or panic? Unclear.",
+  "last_result": "BEAT",
+  "last_delta": 0.5,
+  "last_note": "Volume above forecast. Recruiters noticed, recruiters are confused.",
   "history": [
     {
       "date": "2026-09-30",
@@ -40,13 +40,13 @@
       "date": "2026-10-02",
       "predicted": 11,
       "actual": 40,
-      "result": "MISS",
+      "result": "BEAT",
       "hourly_manip": false,
-      "score": -0.25,
-      "delta": 0.0,
+      "score": 0.5,
+      "delta": 0.5,
       "prob_before": 0.05,
-      "probability": 0.05,
-      "note": "Too many commits. Productivity or panic? Unclear."
+      "probability": 0.55,
+      "note": "Volume above forecast. Recruiters noticed, recruiters are confused."
     }
   ],
   "visitors": {
