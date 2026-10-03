@@ -1,28 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="392" viewBox="0 0 820 392" role="img" aria-labelledby="t d" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="584" viewBox="0 0 640 584" role="img" aria-labelledby="t d" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">
+<style>@media (prefers-reduced-motion: reduce){ .pulse animate { display: none } }</style>
 <title id="t">Hire probability: 0.55%</title>
-<desc id="d">Live "hire probability" exchange. Analyst rating STRONG SELL. Current streak 1 good sessions. Not financial advice.</desc>
-<rect x="0.5" y="0.5" width="819" height="391" rx="14" fill="#0d1117" stroke="#30363d"/>
-<text x="32" y="40" font-size="20" fill="#3fb950" font-weight="bold" text-anchor="start" >$HIRED</text>
-<text x="132" y="40" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="start" >HIRE PROBABILITY EXCHANGE</text>
-<circle cx="622" cy="35" r="4" fill="#3fb950"><animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>
-<text x="632" y="40" font-size="12" fill="#3fb950" font-weight="bold" text-anchor="start" >LIVE</text>
-<text x="788" y="40" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="end" >2026-10-03 IST</text>
-<line x1="32" y1="56" x2="788" y2="56" stroke="#21262d" stroke-width="1"/>
-<text x="32" y="90" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">HIRE PROBABILITY</text>
-<text x="32" y="152" font-size="64" fill="#f0f6fc" font-weight="bold" text-anchor="start" >0.55%</text>
-<text x="32" y="184" font-size="18" font-weight="bold" fill="#3fb950">▲ +0.50<tspan fill="#8b949e" font-weight="normal" font-size="14"> pts  ·  BEAT</tspan></text>
-<rect x="32" y="202" width="237" height="28" rx="6" fill="#f85149" fill-opacity="0.14" stroke="#f85149"/>
-<text x="44" y="221" font-size="13" fill="#f85149" font-weight="bold" text-anchor="start" >ANALYST RATING: STRONG SELL</text>
-<text x="32" y="250" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >3 sessions · 33% hit rate · best streak 1 · 0 exact / 0 near / 1 beat / 2 miss</text>
-<text x="32" y="274" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >Today's call: 20 commits</text>
-<text x="32" y="293" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >(7-day avg 19.86, settles 00:00 IST)</text>
-<text x="32" y="312" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >Streak: 1 correct  ·  best 1</text>
-<text x="430" y="90" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PROBABILITY · LAST 30 SESSIONS</text>
-<line x1="430" y1="106.0" x2="788" y2="106.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="148.0" x2="788" y2="148.0" stroke="#21262d" stroke-width="1"/><line x1="430" y1="190.0" x2="788" y2="190.0" stroke="#21262d" stroke-width="1"/><polygon points="430,190 430.0,131.7 549.3,165.6 668.7,181.9 788.0,114.1 788,190" fill="#3fb950" opacity="0.12"/><polyline points="430.0,131.7 549.3,165.6 668.7,181.9 788.0,114.1" fill="none" stroke="#3fb950" stroke-width="2" stroke-linejoin="round"/><circle cx="788.0" cy="114.1" r="4" fill="#3fb950"/><text x="788" y="102" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="end" >hi 0.55%</text><text x="788" y="202" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="end" >lo 0.05%</text>
-<text x="430" y="226" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PREDICTED (GREY) VS ACTUAL · LAST 7</text>
-<line x1="430" y1="292" x2="788" y2="292" stroke="#21262d" stroke-width="1"/><rect x="642.6" y="247.2" width="14" height="44.9" rx="2" fill="#484f58"/><text x="649.6" y="244.2" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >39</text><rect x="660.6" y="278.2" width="14" height="13.8" rx="2" fill="#f85149"/><text x="667.6" y="275.2" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >12</text><text x="660.1" y="305" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >Wed</text><rect x="693.7" y="266.7" width="14" height="25.3" rx="2" fill="#484f58"/><text x="700.7" y="263.7" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >22</text><rect x="711.7" y="281.6" width="14" height="10.3" rx="2" fill="#f85149"/><text x="718.7" y="278.6" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >9</text><text x="711.3" y="305" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >Thu</text><rect x="744.9" y="279.4" width="14" height="12.7" rx="2" fill="#484f58"/><text x="751.9" y="276.4" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >11</text><rect x="762.9" y="246.0" width="14" height="46.0" rx="2" fill="#3fb950"/><text x="769.9" y="243.0" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >40</text><text x="762.4" y="305" font-size="10" fill="#8b949e" font-weight="normal" text-anchor="middle" >Fri</text>
-<line x1="32" y1="346" x2="788" y2="346" stroke="#21262d" stroke-width="1"/>
-<text x="32" y="366" font-size="13" fill="#d29922" font-weight="normal" text-anchor="start" font-style="italic">“Volume above forecast. Recruiters noticed, recruiters are confused.”</text>
-<text x="32" y="388" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >Not financial advice. Also not a job guarantee.</text>
-<text x="788" y="388" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="end" >updated daily by a GitHub Action</text>
+<desc id="d">Live "hire probability" exchange. Analyst rating STRONG SELL. Current streak 1 good sessions. 61 commits in 3 sessions · 20/day · never missed a day Not financial advice.</desc>
+<rect x="0.5" y="0.5" width="639" height="583" rx="14" fill="#0d1117" stroke="#30363d"/>
+<text x="32" y="36" font-size="20" fill="#3fb950" font-weight="bold" text-anchor="start" >$HIRED</text>
+<text x="132" y="36" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="start" >HIRE PROBABILITY EXCHANGE</text>
+<circle class="pulse" cx="512" cy="31" r="4" fill="#3fb950"><animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>
+<text x="522" y="36" font-size="12" fill="#3fb950" font-weight="bold" text-anchor="start" >LIVE</text>
+<text x="608" y="36" font-size="13" fill="#8b949e" font-weight="normal" text-anchor="end" >2026-10-03 IST</text>
+<line x1="32" y1="52" x2="608" y2="52" stroke="#21262d" stroke-width="1"/>
+<text x="32" y="78" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">HIRE PROBABILITY</text>
+<text x="32" y="134" font-size="56" fill="#f0f6fc" font-weight="bold" text-anchor="start" >0.55%</text>
+<text x="32" y="164" font-size="18" font-weight="bold" fill="#3fb950">▲ +0.50<tspan fill="#8b949e" font-weight="normal" font-size="13">  ·  BEAT</tspan></text>
+<rect x="32" y="182" width="237" height="28" rx="6" fill="#f85149" fill-opacity="0.14" stroke="#f85149"/>
+<text x="44" y="201" font-size="13" fill="#f85149" font-weight="bold" text-anchor="start" >ANALYST RATING: STRONG SELL</text>
+<text x="32" y="242" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >61 commits in 3 sessions · 20/day · never missed a day</text>
+<text x="32" y="262" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >3 sessions · 33% hit rate · best streak 1 · 0 exact / 0 near / 1 beat / 2 miss</text>
+<text x="32" y="288" font-size="14" fill="#f0f6fc" font-weight="normal" text-anchor="start" >Today's call: 20 commits</text>
+<text x="32" y="306" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >(7-day avg 19.86, settles 00:00 IST)</text>
+<text x="32" y="326" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >Streak: 1 good  ·  best 1</text>
+<line x1="32" y1="344" x2="608" y2="344" stroke="#21262d" stroke-width="1"/>
+<text x="32" y="366" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">PROBABILITY · LAST 30 SESSIONS</text>
+<line x1="32" y1="380.0" x2="608" y2="380.0" stroke="#21262d" stroke-width="1"/><line x1="32" y1="407.0" x2="608" y2="407.0" stroke="#21262d" stroke-width="1"/><line x1="32" y1="434.0" x2="608" y2="434.0" stroke="#21262d" stroke-width="1"/><polygon points="32,434 32.0,396.5 224.0,418.3 416.0,428.8 608.0,385.2 608,434" fill="#3fb950" opacity="0.12"/><polyline points="32.0,396.5 224.0,418.3 416.0,428.8 608.0,385.2" fill="none" stroke="#3fb950" stroke-width="2" stroke-linejoin="round"/><circle cx="608.0" cy="385.2" r="4" fill="#3fb950"/><text x="608" y="376" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="end" >hi 0.55%</text><text x="608" y="446" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="end" >lo 0.05%</text>
+<text x="32" y="464" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">SHIPPED vs FORECAST · LAST 7</text>
+<rect x="246" y="456" width="9" height="9" rx="2" fill="#484f58"/>
+<text x="260" y="464" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >forecast</text>
+<rect x="322" y="456" width="9" height="9" rx="2" fill="#3fb950"/>
+<text x="336" y="464" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >shipped</text>
+<line x1="32" y1="528" x2="608" y2="528" stroke="#21262d" stroke-width="1"/><rect x="369.1" y="494.9" width="14" height="33.1" rx="2" fill="#484f58"/><text x="376.1" y="491.9" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >39</text><rect x="387.1" y="517.8" width="14" height="10.2" rx="2" fill="#f85149"/><text x="394.1" y="514.8" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >12</text><text x="402.3" y="541" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >Wed</text><rect x="451.4" y="509.3" width="14" height="18.7" rx="2" fill="#484f58"/><text x="458.4" y="506.3" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >22</text><rect x="469.4" y="520.4" width="14" height="7.7" rx="2" fill="#f85149"/><text x="476.4" y="517.4" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >9</text><text x="484.6" y="541" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >Thu</text><rect x="533.7" y="518.6" width="14" height="9.4" rx="2" fill="#484f58"/><text x="540.7" y="515.6" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >11</text><rect x="551.7" y="494.0" width="14" height="34.0" rx="2" fill="#3fb950"/><text x="558.7" y="491.0" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >40</text><text x="566.9" y="541" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="middle" >Fri</text>
+<line x1="32" y1="542" x2="608" y2="542" stroke="#21262d" stroke-width="1"/>
+<text x="32" y="560" font-size="12" fill="#d29922" font-weight="normal" text-anchor="start" font-style="italic">“Volume above forecast. Recruiters noticed, recruiters are confused.”</text>
+<text x="32" y="578" font-size="11" fill="#8b949e" font-weight="normal" text-anchor="start" >Not financial advice. Also not a job guarantee.</text>
 </svg>

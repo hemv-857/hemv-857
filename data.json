@@ -34,7 +34,8 @@
       "delta": -0.12,
       "prob_before": 0.17,
       "probability": 0.05,
-      "note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde."
+      "note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde.",
+      "clamped": "floor"
     },
     {
       "date": "2026-10-02",
@@ -46,7 +47,8 @@
       "delta": 0.5,
       "prob_before": 0.05,
       "probability": 0.55,
-      "note": "Volume above forecast. Recruiters noticed, recruiters are confused."
+      "note": "Volume above forecast. Recruiters noticed, recruiters are confused.",
+      "clamped": null
     }
   ],
   "visitors": {

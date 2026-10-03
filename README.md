@@ -12,7 +12,7 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=a171e2dc" alt="Hire probability 0.55% (analyst rating: STRONG SELL). Streak: 1." width="820">
+<img src="assets/ticker.svg?v=f064eab5" alt="Hire probability 0.55% (analyst rating: STRONG SELL). 61 commits in 3 sessions · 20/day · never missed a day. Streak: 1." width="640">
 
 </div>
 
@@ -26,7 +26,7 @@
 |---|:-:|:-:|---|:-:|:-:|
 | **2026-10-03** (today) | 20 | ⏳ | Market open | | |
 | 2026-10-02 | 11 | 40 | 🚀 Beat | +0.50 | 0.55% |
-| 2026-10-01 | 22 | 9 | ❌ Miss | -0.25 | 0.05% |
+| 2026-10-01 | 22 | 9 | ❌ Miss ⌄floor | -0.25 | 0.05% |
 | 2026-09-30 | 39 | 12 | ❌ Miss | -0.25 | 0.17% |
 
 <details>

@@ -208,6 +208,21 @@ def stats(history: list[dict], best_streak: int) -> dict:
     }
 
 
+def volume_line(history: list[dict], window: int = 30) -> str:
+    """How much actually got shipped. This is the only number on the card that is
+    about the developer rather than about a 7-day-mean predictor's accuracy."""
+    recent = history[-window:]
+    if not recent:
+        return "No sessions yet \u2014 market opens tomorrow."
+    shipped = sum(e["actual"] for e in recent)
+    days = len(recent)
+    off = sum(e["actual"] == 0 for e in recent)
+    line = f"{shipped} commits in {days} session{'s' if days != 1 else ''} \u00b7 {shipped / days:.0f}/day"
+    if off == 0:
+        return line + " \u00b7 never missed a day"
+    return line + f" \u00b7 {off} day{'s' if off != 1 else ''} at zero"
+
+
 def stats_line(history: list[dict], best_streak: int) -> str:
     s = stats(history, best_streak)
     if s["n"] == 0:
@@ -525,7 +540,10 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
     else:
         delta = {"MISS": PENALTY_MISS, "CRASH": PENALTY_CRASH, "MANIP": PENALTY_MANIP}[result]
 
-    after = round(min(PROB_MAX, max(PROB_MIN, before + delta)), 2)
+    raw = before + delta
+    after = round(min(PROB_MAX, max(PROB_MIN, raw)), 2)
+    # A clamped score is why the displayed delta can disagree with the price move.
+    clamped = "ceiling" if raw > PROB_MAX else "floor" if raw < PROB_MIN else None
 
     pool_key = result
     if result == "MISS":
@@ -541,6 +559,7 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
             "hourly_manip": hourly_manip,
             "score": round(delta, 2),
             "delta": round(after - before, 2),
+            "clamped": clamped,
             "prob_before": before,
             "probability": after,
             "note": note,
@@ -550,6 +569,7 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
     state["probability"] = after
     state["last_result"] = result
     state["last_delta"] = round(delta, 2)
+    state["last_clamped"] = clamped
     state["last_note"] = note
 
 
@@ -608,8 +628,8 @@ def _sparkline(series, x0, y0, w, h, color) -> str:
     out.append(f'<polyline points="{line}" fill="none" stroke="{color}" stroke-width="2" stroke-linejoin="round"/>')
     lx, ly = pts[-1]
     out.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="{color}"/>')
-    out.append(_t(x0 + w, y0 - 4, f"hi {max(series):.2f}%", 10, MUTED, anchor="end"))
-    out.append(_t(x0 + w, y0 + h + 12, f"lo {min(series):.2f}%", 10, MUTED, anchor="end"))
+    out.append(_t(x0 + w, y0 - 4, f"hi {max(series):.2f}%", 11, MUTED, anchor="end"))
+    out.append(_t(x0 + w, y0 + h + 12, f"lo {min(series):.2f}%", 11, MUTED, anchor="end"))
     return "".join(out)
 
 
@@ -627,26 +647,30 @@ def _bars(entries, x0, base_y, w, max_h) -> str:
             bh = max(2, val / maxv * max_h)
             bx = sx + 8 + j * 18
             out.append(f'<rect x="{bx:.1f}" y="{base_y - bh:.1f}" width="14" height="{bh:.1f}" rx="2" fill="{colr}"/>')
-            out.append(_t(f"{bx + 7:.1f}", f"{base_y - bh - 3:.1f}", val, 10, MUTED, anchor="middle"))
+            out.append(_t(f"{bx + 7:.1f}", f"{base_y - bh - 3:.1f}", val, 11, MUTED, anchor="middle"))
         wd = date.fromisoformat(e["date"]).strftime("%a")
-        out.append(_t(f"{sx + slot_w / 2:.1f}", base_y + 13, wd, 10, MUTED, anchor="middle"))
+        out.append(_t(f"{sx + slot_w / 2:.1f}", base_y + 13, wd, 11, MUTED, anchor="middle"))
     return "".join(out)
 
 
 def render_svg(state: dict) -> str:
-    W, H = 820, 392
+    # Single column at 640px. GitHub scales an <img> to the viewport, so a wide
+    # two-column layout rendered 10px labels at ~4px on a phone. Narrower +
+    # stacked means less downscaling and nothing is ever pushed off-canvas.
+    W, H = 640, 584
+    M, R = 32, W - 32
     p = state["probability"]
     hist = state["history"]
     label, label_col = rating(p)
     last_res = state.get("last_result")
     delta = state.get("last_delta", 0.0)
+    clamped = state.get("last_clamped")
 
     up = delta >= 0
     trend_col = GREEN if (up and last_res not in ("MISS", "CRASH", "MANIP")) else RED
     if not hist:
         trend_col = GREEN
 
-    # Series for sparkline
     recent = hist[-30:]
     series = ([recent[0]["prob_before"]] + [e["probability"] for e in recent]) if recent else []
 
@@ -657,7 +681,7 @@ def render_svg(state: dict) -> str:
         note = state["last_note"]
     else:
         note = random.Random("init").choice(NOTES["INIT"])
-    note_lines = textwrap.wrap(note, 84)[:2]
+    note_lines = textwrap.wrap(note, 88)[:2]
 
     updated = state.get("updated")
     pend = state.get("pending")
@@ -665,64 +689,75 @@ def render_svg(state: dict) -> str:
     o = []
     o.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
              f'role="img" aria-labelledby="t d" font-family="{FONT}">')
+    o.append('<style>@media (prefers-reduced-motion: reduce){ .pulse animate { display: none } }</style>')
     o.append(f'<title id="t">Hire probability: {p:.2f}%</title>')
     o.append(f'<desc id="d">Live "hire probability" exchange. Analyst rating {label}. '
-             f'Current streak {state["streak"]} good sessions. Not financial advice.</desc>')
+             f'Current streak {state["streak"]} good sessions. {escape(volume_line(hist))} '
+             f'Not financial advice.</desc>')
     o.append(f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="14" fill="{BG}" stroke="{BORDER}"/>')
 
     # Header
-    o.append(_t(32, 40, "$HIRED", 20, GREEN, "bold"))
-    o.append(_t(132, 40, "HIRE PROBABILITY EXCHANGE", 13, MUTED))
-    o.append(f'<circle cx="622" cy="35" r="4" fill="{GREEN}"><animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>')
-    o.append(_t(632, 40, "LIVE", 12, GREEN, "bold"))
-    o.append(_t(788, 40, f"{updated} IST" if updated else "PRE-MARKET", 13, MUTED, anchor="end"))
-    o.append(f'<line x1="32" y1="56" x2="788" y2="56" stroke="{GRID}" stroke-width="1"/>')
+    o.append(_t(M, 36, "$HIRED", 20, GREEN, "bold"))
+    o.append(_t(132, 36, "HIRE PROBABILITY EXCHANGE", 13, MUTED))
+    o.append(f'<circle class="pulse" cx="{R - 96}" cy="31" r="4" fill="{GREEN}">'
+             f'<animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>')
+    o.append(_t(R - 86, 36, "LIVE", 12, GREEN, "bold"))
+    o.append(_t(R, 36, f"{updated} IST" if updated else "PRE-MARKET", 13, MUTED, anchor="end"))
+    o.append(f'<line x1="{M}" y1="52" x2="{R}" y2="52" stroke="{GRID}" stroke-width="1"/>')
 
-    # Left column
-    o.append(_t(32, 90, "HIRE PROBABILITY", 12, MUTED, style='letter-spacing="1"'))
-    o.append(_t(32, 152, f"{p:.2f}%", 64, TEXT, "bold"))
+    # Headline
+    o.append(_t(M, 78, "HIRE PROBABILITY", 12, MUTED, style='letter-spacing="1"'))
+    o.append(_t(M, 134, f"{p:.2f}%", 56, TEXT, "bold"))
     if hist:
-        arrow = "▲" if delta > 0 else ("▼" if delta < 0 else "■")
+        arrow = "\u25b2" if delta > 0 else ("\u25bc" if delta < 0 else "\u25a0")
+        tail = f'  \u00b7  {escape(RESULT_LABEL[last_res].split(" ", 1)[1].upper())}'
+        if clamped:
+            tail += f'  \u00b7  AT {clamped.upper()}'
         o.append(
-            f'<text x="32" y="184" font-size="18" font-weight="bold" fill="{trend_col}">'
-            f'{arrow} {delta:+.2f}<tspan fill="{MUTED}" font-weight="normal" font-size="14"> pts  ·  {RESULT_LABEL[last_res].split(" ", 1)[1].upper()}</tspan></text>'
+            f'<text x="{M}" y="164" font-size="18" font-weight="bold" fill="{trend_col}">'
+            f'{arrow} {delta:+.2f}<tspan fill="{MUTED}" font-weight="normal" '
+            f'font-size="13">{escape(tail)}</tspan></text>'
         )
     else:
-        o.append(_t(32, 184, "■ 0.00 pts  ·  IPO DAY", 16, MUTED))
+        o.append(_t(M, 164, "\u25a0 0.00 pts  \u00b7  IPO DAY", 16, MUTED))
 
     badge = f"ANALYST RATING: {label}"
     bw = len(badge) * 7.9 + 24
-    o.append(f'<rect x="32" y="202" width="{bw:.0f}" height="28" rx="6" fill="{label_col}" fill-opacity="0.14" stroke="{label_col}"/>')
-    o.append(_t(44, 221, badge, 13, label_col, "bold"))
+    o.append(f'<rect x="{M}" y="182" width="{bw:.0f}" height="28" rx="6" fill="{label_col}" '
+             f'fill-opacity="0.14" stroke="{label_col}"/>')
+    o.append(_t(M + 12, 201, badge, 13, label_col, "bold"))
 
-    # Stats row (NEW)
-    o.append(_t(32, 250, stats_line(hist, state["best_streak"]), 12, MUTED))
+    # Volume first, accuracy second. The predictor is a 7-day mean and will always
+    # look bad; the commit count is the part that is actually about me.
+    o.append(_t(M, 242, volume_line(hist), 14, TEXT))
+    o.append(_t(M, 262, stats_line(hist, state["best_streak"]), 11, MUTED))
 
     if pend:
-        o.append(_t(32, 274, f"Today's call: {pend['predicted']} commit{'s' if pend['predicted'] != 1 else ''}", 14, TEXT))
-        o.append(_t(32, 293, f"(7-day avg {pend['avg7']}, settles 00:00 IST)", 12, MUTED))
+        o.append(_t(M, 288, f"Today's call: {pend['predicted']} commit{'s' if pend['predicted'] != 1 else ''}", 14, TEXT))
+        o.append(_t(M, 306, f"(7-day avg {pend['avg7']}, settles 00:00 IST)", 12, MUTED))
     else:
-        o.append(_t(32, 274, "Today's call: pending", 14, TEXT))
-    o.append(_t(32, 312, f"Streak: {state['streak']} correct  ·  best {state['best_streak']}", 12, MUTED))
+        o.append(_t(M, 288, "Today's call: pending", 14, TEXT))
+    o.append(_t(M, 326, f"Streak: {state['streak']} good  \u00b7  best {state['best_streak']}", 12, MUTED))
 
-    # Visitor votes (NEW)
-    vis = state.get("visitors", {"hit": 0, "miss": 0})
-    if vis.get("hit", 0) or vis.get("miss", 0):
-        o.append(_t(32, 330, f"Visitor votes: {vis.get('hit', 0)} 👍 / {vis.get('miss', 0)} 👎", 11, MUTED))
+    o.append(f'<line x1="{M}" y1="344" x2="{R}" y2="344" stroke="{GRID}" stroke-width="1"/>')
 
-    # Right column: sparkline + bars
-    o.append(_t(430, 90, "PROBABILITY · LAST 30 SESSIONS", 12, MUTED, style='letter-spacing="1"'))
-    o.append(_sparkline(series, 430, 106, 358, 84, trend_col))
-    o.append(_t(430, 226, "PREDICTED (GREY) VS ACTUAL · LAST 7", 12, MUTED, style='letter-spacing="1"'))
-    o.append(_bars(hist[-7:], 430, 292, 358, 46))
+    # Charts
+    o.append(_t(M, 366, "PROBABILITY \u00b7 LAST 30 SESSIONS", 12, MUTED, style='letter-spacing="1"'))
+    o.append(_sparkline(series, M, 380, R - M, 54, trend_col))
+
+    o.append(_t(M, 464, "SHIPPED vs FORECAST \u00b7 LAST 7", 12, MUTED, style='letter-spacing="1"'))
+    o.append(f'<rect x="{M + 214}" y="456" width="9" height="9" rx="2" fill="{BAR_PRED}"/>')
+    o.append(_t(M + 228, 464, "forecast", 11, MUTED))
+    o.append(f'<rect x="{M + 290}" y="456" width="9" height="9" rx="2" fill="{GREEN}"/>')
+    o.append(_t(M + 304, 464, "shipped", 11, MUTED))
+    o.append(_bars(hist[-7:], M, 528, R - M, 34))
 
     # Footer
-    o.append(f'<line x1="32" y1="346" x2="788" y2="346" stroke="{GRID}" stroke-width="1"/>')
+    o.append(f'<line x1="{M}" y1="542" x2="{R}" y2="542" stroke="{GRID}" stroke-width="1"/>')
     for i, ln in enumerate(note_lines):
-        o.append(_t(32, 366 + i * 16, ("“" if i == 0 else "") + ln + ("”" if i == len(note_lines) - 1 else ""),
-                    13, AMBER, style='font-style="italic"'))
-    o.append(_t(32, 388, "Not financial advice. Also not a job guarantee.", 11, MUTED))
-    o.append(_t(788, 388, "updated daily by a GitHub Action", 11, MUTED, anchor="end"))
+        o.append(_t(M, 560 + i * 15, ("\u201c" if i == 0 else "") + ln + ("\u201d" if i == len(note_lines) - 1 else ""),
+                    12, AMBER, style='font-style="italic"'))
+    o.append(_t(M, 578, "Not financial advice. Also not a job guarantee.", 11, MUTED))
     o.append("</svg>")
     return "\n".join(o)
 
@@ -736,12 +771,13 @@ def render_block(state: dict) -> str:
     stamp = hashlib.sha1(render_svg(state).encode()).hexdigest()[:8]
     p = state["probability"]
     label, _ = rating(p)
-    alt = f"Hire probability {p:.2f}% (analyst rating: {label}). Streak: {state['streak']}."
+    alt = (f"Hire probability {p:.2f}% (analyst rating: {label}). "
+           f"{volume_line(state['history'])}. Streak: {state['streak']}.")
 
     lines = [
         '<div align="center">',
         "",
-        f'<img src="assets/ticker.svg?v={stamp}" alt="{alt}" width="820">',
+        f'<img src="assets/ticker.svg?v={stamp}" alt="{escape(alt)}" width="640">',
         "",
         "</div>",
         "",
@@ -770,6 +806,9 @@ def render_block(state: dict) -> str:
         rows.append(f"| **{pend['for_date']}** (today) | {pend['predicted']} | ⏳ | Market open | | |")
     for e in reversed(state["history"][-README_ROWS:]):
         manip_flag = " 🚨" if e.get("hourly_manip") else ""
+        if e.get("clamped"):
+            # A clamped score is why the pts column can disagree with the price move.
+            manip_flag += f" {'⌄' if e['clamped'] == 'floor' else '⌃'}{e['clamped']}"
         rows.append(
             f"| {e['date']} | {e['predicted']} | {e['actual']} | {RESULT_LABEL[e['result']]}{manip_flag} "
             f"| {e.get('score', e['delta']):+.2f} | {e['probability']:.2f}% |"
