@@ -12,28 +12,29 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=39243189" alt="Hire probability 4.50% (analyst rating: SELL). 135 commits in 4 sessions · 34/day · never missed a day. Streak: 4." width="640">
+<img src="assets/ticker.svg?v=a7be1f04" alt="Hire probability 3.37% (analyst rating: SELL). 135 commits in 4 sessions · 34/day · never missed a day. Streak: 4." width="640">
 
 </div>
 
 <br>
 
-*4 sessions · 100% hit rate · best streak 4 · 2 exact / 0 near / 2 beat / 0 miss*
+*4 sessions · 100% hit rate · best streak 4 · 4 exact / 0 near / 0 beat / 0 miss*
 
 > 📊 2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
 | Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-10-04** (today) | 9–74 | ⏳ | Market open | | |
-| 2026-10-03 | 9–40 | 74 | 🚀 Beat | +1.80 | 4.50% |
-| 2026-10-02 | 4–29 | 40 | 🚀 Beat | +1.22 | 2.70% |
-| 2026-10-01 | 4–94 | 9 | ✅ Exact hit | +0.53 | 1.48% |
-| 2026-09-30 | 4–136 | 12 | ✅ Exact hit | +0.53 | 0.95% |
+| **2026-10-04** (today) | 4–50 | ⏳ | Market open | | |
+| 2026-10-03 | 4–50 | 38 | ✅ Exact hit | +0.87 | 3.37% |
+| 2026-10-02 | 4–50 | 43 | ✅ Exact hit | +0.92 | 2.50% |
+| 2026-10-01 | 4–50 | 4 | ✅ Exact hit | +0.50 | 1.58% |
+| 2026-09-30 | 4–151 | 50 | ✅ Exact hit | +0.66 | 1.08% |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>
 
 - Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last 7 days. Anything inside is a hit — roughly 4 days in 5.
+- Counts are the commits that still exist on my repos' default branches, so `git log` agrees with me. GitHub's contribution graph never retracts a commit — rebased and amended work stays counted forever, and it claimed 74 for a day with 38 commits in it.
 - The next midnight it fetches my **real** commit count and settles the trade.
 - The reward follows the work, not the accuracy: **0.5** pts for landing anywhere on the bottom of the range, **1** for the top, and up to **1.5** for beating it. Streaks add a small bonus.
 - Coming in 1 under the range is **0.25** pts, further under is **-0.25**, and zero commits on a day that expected work is **-0.5**.

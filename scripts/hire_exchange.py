@@ -280,36 +280,67 @@ def _request_json(req: request.Request, attempts: int = RETRY_ATTEMPTS) -> dict:
     raise RuntimeError(f"GitHub API failed after {attempts} attempts: {last_err}")
 
 
-def fetch_commit_counts(login: str, days: list[date], token: str) -> dict[date, int]:
-    """One GraphQL request, one aliased contributionsCollection per IST day.
+def fetch_repo_names(login: str, token: str) -> list[str]:
+    """Every non-fork repo owned by `login`, newest first."""
+    names: list[str] = []
+    for page in range(1, 4):
+        chunk = _gh_api("GET", f"/users/{login}/repos?per_page=100&page={page}", token) or []
+        names += [r["full_name"] for r in chunk if not r.get("fork")]
+        if len(chunk) < 100:
+            break
+    return names
 
-    ponytail: totalCommitContributions is the contribution-graph number, not a
-    commit count - it excludes forks and repos without push access, and it lags.
-    Swap in the REST /repos/*/commits listing if that ever matters.
+
+def _commits_on_branch(repo: str, since: str, until: str, token: str) -> list[str]:
+    """UTC commit timestamps on `repo`'s default branch in the window.
+
+    Raises if the listing fails. Silently returning [] here would undercount the
+    day and post a wrong number - a frozen README is much better than a lie.
     """
-    fields = []
-    for d in days:
-        s, e = day_bounds_utc(d)
-        fields.append(
-            f'd{d:%Y%m%d}: contributionsCollection(from: "{s}", to: "{e}") '
-            f"{{ totalCommitContributions }}"
+    out: list[str] = []
+    for page in range(1, 11):  # 1000 commits per repo is far past any real day
+        chunk = _gh_api(
+            "GET", f"/repos/{repo}/commits?since={since}&until={until}&per_page=100&page={page}", token
         )
-    query = "query($login: String!) { user(login: $login) { " + " ".join(fields) + " } }"
-    body = json.dumps({"query": query, "variables": {"login": login}}).encode()
-    req = request.Request(
-        "https://api.github.com/graphql",
-        data=body,
-        headers={
-            "Authorization": f"bearer {token}",
-            "Content-Type": "application/json",
-            "User-Agent": "hire-exchange",
-        },
-    )
-    payload = _request_json(req)
-    if payload.get("errors") or not payload.get("data", {}).get("user"):
-        raise RuntimeError(f"GitHub GraphQL error: {payload.get('errors') or 'user not found'}")
-    user = payload["data"]["user"]
-    return {d: int(user[f"d{d:%Y%m%d}"]["totalCommitContributions"]) for d in days}
+        if chunk is None:
+            raise RuntimeError(f"commit listing failed for {repo} (page {page})")
+        out += [c["commit"]["committer"]["date"] for c in chunk
+                if c.get("commit", {}).get("committer", {}).get("date")]
+        if len(chunk) < 100:
+            break
+    return out
+
+
+def fetch_commit_counts(login: str, days: list[date], token: str) -> dict[date, int]:
+    """Commits that still exist, per IST day, across every repo `login` owns.
+
+    Not the contribution graph. `contributionsCollection.totalCommitContributions`
+    counts a commit the moment it is pushed and never retracts it, so rebased,
+    amended and force-pushed-away commits inflate it forever - it reported 74 for
+    a day with 38 commits in it, including 16 in repos with none at all. A
+    recruiter can run `git log`; the ticker has to agree with them.
+
+    Deliberately NOT filtered by author: GitHub resolves a commit to an account by
+    email, so commits from an unlinked address would silently vanish (one day here
+    dropped from 4 to 0 that way). Everything on your repos' default branches
+    counts, which is what `git log` shows.
+
+    Costs one listing per repo over the whole window instead of one GraphQL call,
+    which also drops a hard node limit that breaks outright on a busy account.
+    """
+    lo, hi = min(days), max(days)
+    since = _utc(datetime(lo.year, lo.month, lo.day, tzinfo=IST))
+    until = _utc(datetime(hi.year, hi.month, hi.day, tzinfo=IST) + timedelta(days=1) - timedelta(seconds=1))
+
+    counts = {d: 0 for d in days}
+    for repo in fetch_repo_names(login, token):
+        for iso in _commits_on_branch(repo, since, until, token):
+            # No dedupe: six commits pushed in the same minute share a timestamp,
+            # and deduping on that would silently drop five of them.
+            day = datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(IST).date()
+            if day in counts:
+                counts[day] += 1
+    return counts
 
 
 def mock_commit_counts(days: list[date]) -> dict[date, int]:
@@ -976,6 +1007,7 @@ def render_block(state: dict) -> str:
         "<summary>How does this work? (a.k.a. why is this in my README)</summary>",
         "",
         f"- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last {PREDICT_WINDOW_DAYS} days. Anything inside is a hit \u2014 roughly 4 days in 5.",
+        "- Counts are the commits that still exist on my repos' default branches, so `git log` agrees with me. GitHub's contribution graph never retracts a commit \u2014 rebased and amended work stays counted forever, and it claimed 74 for a day with 38 commits in it.",
         "- The next midnight it fetches my **real** commit count and settles the trade.",
         f"- The reward follows the work, not the accuracy: **{REWARD_FLOOR:g}** pts for landing anywhere on the bottom of the range, **{REWARD_CEIL:g}** for the top, and up to **{REWARD_CEIL + OVERSHOOT_BONUS:g}** for beating it. Streaks add a small bonus.",
         f"- Coming in {TOLERANCE} under the range is **{REWARD_EDGE:g}** pts, further under is **{PENALTY_MISS:g}**, and zero commits on a day that expected work is **{PENALTY_CRASH:g}**.",
