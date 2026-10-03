@@ -692,6 +692,16 @@ RESULT_COLOR = {"HIT": GREEN, "NEAR": GREEN, "BEAT": GREEN, "MISS": RED, "CRASH"
                 "MANIP": AMBER, "SKIP": MUTED}
 
 
+# Generous advance width for the card's sans stack. Only used to lay things out
+# so they cannot collide, so erring wide is safe.
+_ADV = 0.62
+
+
+def _tw(s: str, size: int, tracking: float = 0.0) -> float:
+    """Approximate rendered width of a text run, in user units."""
+    return (len(str(s)) * size * _ADV) + max(0, len(str(s)) - 1) * tracking
+
+
 def _t(x, y, s, size=13, fill=MUTED, weight="normal", anchor="start", style="") -> str:
     return (
         f'<text x="{x}" y="{y}" font-size="{size}" fill="{fill}" font-weight="{weight}" '
@@ -745,18 +755,21 @@ def _bars(entries, x0, base_y, w, max_h) -> str:
 
     for i, e in enumerate(entries):
         sx = x0 + (offset + i) * slot_w
-        # forecast range: outlined bar spanning lo..hi
-        bx, bw = sx + 6, 16
+        bw = 16
         top, bot = y(e["hi"]), max(y(e["lo"]), base_y - 2)
-        out.append(f'<rect x="{bx}" y="{top:.1f}" width="{bw}" height="{max(2.0, bot - top):.1f}" '
-                   f'rx="2" fill="{BAR_PRED}" fill-opacity="0.18" stroke="{BAR_PRED}" stroke-width="1.5"/>')
-        out.append(_t(bx + bw / 2, top - 3, f"{e['lo']}\u2013{e['hi']}", 10, MUTED, anchor="middle"))
-        # actual: filled bar
         ah = max(2.0, base_y - y(e["actual"]))
-        ax = sx + 30
-        out.append(f'<rect x="{ax}" y="{base_y - ah:.1f}" width="{bw}" height="{ah:.1f}" rx="2" '
+        # The exact range goes in a tooltip, not on the bar: "136-136" is wider
+        # than a 7-day slot and collided with the shipped label next to it.
+        tip = f"{e['date']} — forecast {e['lo']}–{e['hi']}, shipped {e['actual']} — {RESULT_LABEL[e['result']]}"
+        out.append(f"<g><title>{escape(tip)}</title>")
+        # forecast range: outlined bar spanning lo..hi
+        out.append(f'<rect x="{sx + 6:.1f}" y="{top:.1f}" width="{bw}" height="{max(2.0, bot - top):.1f}" '
+                   f'rx="2" fill="{BAR_PRED}" fill-opacity="0.18" stroke="{BAR_PRED}" stroke-width="1.5"/>')
+        # actual: filled bar
+        out.append(f'<rect x="{sx + 30:.1f}" y="{base_y - ah:.1f}" width="{bw}" height="{ah:.1f}" rx="2" '
                    f'fill="{RESULT_COLOR[e["result"]]}"/>')
-        out.append(_t(ax + bw / 2, base_y - ah - 3, e["actual"], 11, MUTED, anchor="middle"))
+        out.append(_t(sx + 38, base_y - ah - 3, e["actual"], 11, MUTED, anchor="middle"))
+        out.append("</g>")
         out.append(_t(f"{sx + slot_w / 2:.1f}", base_y + 13,
                       date.fromisoformat(e["date"]).strftime("%a"), 11, MUTED, anchor="middle"))
     return "".join(out)
@@ -808,10 +821,14 @@ def render_svg(state: dict) -> str:
     # Header
     o.append(_t(M, 36, "$HIRED", 20, GREEN, "bold"))
     o.append(_t(132, 36, "HIRE PROBABILITY EXCHANGE", 13, MUTED))
-    o.append(f'<circle class="pulse" cx="{R - 96}" cy="31" r="4" fill="{GREEN}">'
+    # Laid out from the date's measured width. A fixed offset collided with it the
+    # moment the date got a day longer.
+    stamp = f"{updated} IST" if updated else "PRE-MARKET"
+    live_x = R - _tw(stamp, 13) - 18 - _tw("LIVE", 12)
+    o.append(_t(R, 36, stamp, 13, MUTED, anchor="end"))
+    o.append(_t(live_x, 36, "LIVE", 12, GREEN, "bold"))
+    o.append(f'<circle class="pulse" cx="{live_x - 13}" cy="31" r="4" fill="{GREEN}">'
              f'<animate attributeName="opacity" values="1;0.25;1" dur="2s" repeatCount="indefinite"/></circle>')
-    o.append(_t(R - 86, 36, "LIVE", 12, GREEN, "bold"))
-    o.append(_t(R, 36, f"{updated} IST" if updated else "PRE-MARKET", 13, MUTED, anchor="end"))
     o.append(f'<line x1="{M}" y1="52" x2="{R}" y2="52" stroke="{GRID}" stroke-width="1"/>')
 
     # Headline
@@ -854,12 +871,15 @@ def render_svg(state: dict) -> str:
     o.append(_t(M, 366, "PROBABILITY \u00b7 LAST 30 SESSIONS", 12, MUTED, style='letter-spacing="1"'))
     o.append(_sparkline(series, M, 380, R - M, 54, trend_col))
 
-    o.append(_t(M, 464, "FORECAST RANGE vs SHIPPED \u00b7 LAST 7", 12, MUTED, style='letter-spacing="1"'))
-    o.append(f'<rect x="{M + 268}" y="456" width="9" height="9" rx="2" fill="{BAR_PRED}" '
+    chart_title = "FORECAST vs SHIPPED"
+    o.append(_t(M, 464, chart_title, 12, MUTED, style='letter-spacing="1"'))
+    lx = M + _tw(chart_title, 12, tracking=1) + 22
+    o.append(f'<rect x="{lx}" y="456" width="9" height="9" rx="2" fill="{BAR_PRED}" '
              f'fill-opacity="0.18" stroke="{BAR_PRED}"/>')
-    o.append(_t(M + 282, 464, "forecast range", 11, MUTED))
-    o.append(f'<rect x="{M + 372}" y="456" width="9" height="9" rx="2" fill="{GREEN}"/>')
-    o.append(_t(M + 386, 464, "shipped", 11, MUTED))
+    o.append(_t(lx + 14, 464, "forecast range", 11, MUTED))
+    sx = lx + 14 + _tw("forecast range", 11) + 18
+    o.append(f'<rect x="{sx}" y="456" width="9" height="9" rx="2" fill="{GREEN}"/>')
+    o.append(_t(sx + 14, 464, "shipped", 11, MUTED))
     o.append(_bars(hist[-7:], M, 528, R - M, 34))
 
     # Footer

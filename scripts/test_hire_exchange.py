@@ -158,30 +158,85 @@ h._gh_api = api_create
 h.create_vote_issue(st, "t", "o")
 assert st["vote_issue"] == 42 and len(posted) == 1 and posted[0]["title"] == NEW
 
-# The SVG must stay parseable XML and fit its canvas, at any price or history.
+# The SVG must stay parseable XML, fit its canvas, and never overlap itself.
+# Two hardcoded offsets did exactly that once: LIVE over the date, and the
+# legend swatches over "LAST 7".
+def _runs(svg):
+    """(x0, x1, y_top, y_bottom, text) for every rendered string.
+
+    Reads the whole open tag, not just the attributes before font-size -
+    text-anchor="end" comes last, and missing it silently measures every
+    right-aligned label as if it were left-aligned.
+    """
+    out = []
+    for mm in re.finditer(r"<(text|tspan)\b([^>]*)>([^<]*)", svg):
+        attrs, txt = mm[2], mm[3]
+        if not txt.strip():
+            continue
+        gx, gy = re.search(r'\bx="([\d.]+)"', attrs), re.search(r'\by="([\d.]+)"', attrs)
+        fs = re.search(r'font-size="(\d+)"', attrs)
+        if not (gx and gy and fs):
+            continue
+        x, y, size = float(gx[1]), float(gy[1]), int(fs[1])
+        w = len(txt) * size * 0.62
+        if 'text-anchor="middle"' in attrs:
+            x0 = x - w / 2
+        elif 'text-anchor="end"' in attrs:
+            x0 = x - w
+        else:
+            x0 = x
+        out.append((x0, x0 + w, y - size * 0.75, y + size * 0.25, txt))
+    return out
+
+
 def svg_ok(state):
     svg = h.render_svg(state)
     ET.fromstring(svg)
     W, H = map(float, re.search(r'width="(\d+)" height="(\d+)"', svg).groups())
-    for mm in re.finditer(r'<text x="([\d.]+)" y="([\d.]+)"[^>]*font-size="(\d+)"[^>]*>([^<]*)', svg):
-        x, y, size, txt = float(mm[1]), float(mm[2]), int(mm[3]), mm[4]
-        w = len(txt) * size * 0.62
-        a = ("end" if 'text-anchor="end"' in mm[0]
-             else "middle" if 'text-anchor="middle"' in mm[0] else "start")
-        x0 = x if a == "start" else (x - w / 2 if a == "middle" else x - w)
-        assert 8 <= x0 and x0 + w <= W - 8 and 10 <= y <= H - 4, (txt[:40], x0, x0 + w, y)
+    runs = _runs(svg)
+    assert runs, "no text rendered at all"
+    for x0, x1, top, bot, txt in runs:
+        assert 4 <= x0 and x1 <= W - 4, f"outside canvas: {txt!r} {x0:.0f}..{x1:.0f} of {W}"
+        assert 8 <= top and bot <= H - 2, f"outside canvas: {txt!r} {top:.0f}..{bot:.0f} of {H}"
+    for i in range(len(runs)):
+        for j in range(i + 1, len(runs)):
+            a, b = runs[i], runs[j]
+            assert not (a[2] < b[3] and b[2] < a[3] and a[0] < b[1] and b[0] < a[1]), \
+                f"overlap: {a[4]!r} x {b[4]!r}"
+    # ...and so must small rects (the legend swatches) - the second collision was
+    # a chip sitting on top of the chart title, which text-vs-text cannot see.
+    chips = []
+    for mm in re.finditer(r'<rect x="([\d.]+)" y="([\d.]+)" width="(\d+)" height="(\d+)"', svg):
+        x, y, w, ht = (float(mm[i]) for i in range(1, 5))
+        if w <= 14 and ht <= 14:
+            chips.append((x, x + w, y, y + ht))
+    for cx0, cx1, cy0, cy1 in chips:
+        for x0, x1, top, bot, txt in runs:
+            assert not (cx0 < x1 and x0 < cx1 and cy0 < bot and top < cy1), \
+                f"swatch {cx0:.0f},{cy0:.0f} sits on {txt!r}"
     assert min(int(f) for f in re.findall(r'font-size=.(\d+)', svg)) >= 10
+
 
 svg_ok({"probability": 50.0, "streak": 0, "best_streak": 0, "history": [], "pending": None})
 for res in ("HIT", "BEAT", "MISS", "CRASH", "MANIP", "SKIP"):
     svg_ok({"probability": h.PROB_MIN, "streak": 1, "best_streak": 2, "updated": "2026-10-03",
             "last_result": res, "last_delta": -0.25, "last_clamped": "floor",
-            "last_note": "note", "pending": {"for_date": "2026-10-03", "lo": 1, "hi": 999, "avg7": 12.5},
+            "last_note": "note",
+            "pending": {"for_date": "2026-10-03", "lo": 1, "hi": 999, "avg7": 12.5},
             "history": [{"date": f"2026-10-0{i}", "lo": 1, "hi": 999, "actual": i * 7,
                          "result": res, "prob_before": 1.0, "probability": 1.0 + i}
                         for i in range(1, 8)]})
 svg_ok({"probability": 99.89, "streak": 9, "best_streak": 9, "updated": "2026-10-03",
         "last_result": "HIT", "last_delta": 1.0, "last_clamped": "ceiling", "last_note": "x",
         "pending": None, "history": []})
+# The longest date the ticker will ever print, and the widest headline.
+svg_ok({"probability": 99.89, "streak": 99, "best_streak": 99, "updated": "2026-12-31",
+        "last_result": "BEAT", "last_delta": 1.5, "last_clamped": None,
+        "last_note": "Beat the range by a mile. The model is now upgrading its assumptions.",
+        "pending": {"for_date": "2026-12-31", "lo": 136, "hi": 136, "avg7": 136.0},
+        "visitors": {"hit": 9999, "miss": 9999},
+        "history": [{"date": f"2026-10-{i:02d}", "lo": 136, "hi": 136, "actual": 136,
+                     "result": "BEAT", "prob_before": 1.0, "probability": 1.0}
+                    for i in range(1, 8)]})
 
 print("ok")

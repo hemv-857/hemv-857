@@ -12,7 +12,7 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=cf9dbcaa" alt="Hire probability 2.92% (analyst rating: SELL). 61 commits in 3 sessions · 20/day · never missed a day. Streak: 3." width="640">
+<img src="assets/ticker.svg?v=0f0da27d" alt="Hire probability 2.92% (analyst rating: SELL). 61 commits in 3 sessions · 20/day · never missed a day. Streak: 3." width="640">
 
 </div>
 
