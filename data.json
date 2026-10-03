@@ -1,18 +1,18 @@
 {
-  "probability": 2.7,
-  "streak": 3,
-  "best_streak": 3,
+  "probability": 4.5,
+  "streak": 4,
+  "best_streak": 4,
   "opened": "2026-09-30",
-  "updated": "2026-10-03",
+  "updated": "2026-10-04",
   "pending": {
-    "for_date": "2026-10-03",
+    "for_date": "2026-10-04",
     "lo": 9,
-    "hi": 40,
-    "avg7": 19.86
+    "hi": 74,
+    "avg7": 29.14
   },
   "last_result": "BEAT",
-  "last_delta": 1.22,
-  "last_note": "Volume above forecast. Recruiters noticed, recruiters are confused.",
+  "last_delta": 1.8,
+  "last_note": "Overdelivered. The forecast was simply wrong, and happily so.",
   "history": [
     {
       "date": "2026-09-30",
@@ -58,6 +58,21 @@
       "prob_before": 1.48,
       "probability": 2.7,
       "note": "Volume above forecast. Recruiters noticed, recruiters are confused."
+    },
+    {
+      "date": "2026-10-03",
+      "lo": 9,
+      "hi": 40,
+      "predicted": 24,
+      "actual": 74,
+      "result": "BEAT",
+      "hourly_manip": false,
+      "score": 1.8,
+      "delta": 1.8,
+      "clamped": null,
+      "prob_before": 2.7,
+      "probability": 4.5,
+      "note": "Overdelivered. The forecast was simply wrong, and happily so."
     }
   ],
   "visitors": {
@@ -65,7 +80,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 4,
+  "vote_issue": 6,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null

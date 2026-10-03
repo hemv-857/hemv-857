@@ -12,19 +12,20 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=193e387f" alt="Hire probability 2.70% (analyst rating: SELL). 61 commits in 3 sessions · 20/day · never missed a day. Streak: 3." width="640">
+<img src="assets/ticker.svg?v=39243189" alt="Hire probability 4.50% (analyst rating: SELL). 135 commits in 4 sessions · 34/day · never missed a day. Streak: 4." width="640">
 
 </div>
 
 <br>
 
-*3 sessions · 100% hit rate · best streak 3 · 2 exact / 0 near / 1 beat / 0 miss*
+*4 sessions · 100% hit rate · best streak 4 · 2 exact / 0 near / 2 beat / 0 miss*
 
 > 📊 2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
 | Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-10-03** (today) | 9–40 | ⏳ | Market open | | |
+| **2026-10-04** (today) | 9–74 | ⏳ | Market open | | |
+| 2026-10-03 | 9–40 | 74 | 🚀 Beat | +1.80 | 4.50% |
 | 2026-10-02 | 4–29 | 40 | 🚀 Beat | +1.22 | 2.70% |
 | 2026-10-01 | 4–94 | 9 | ✅ Exact hit | +0.53 | 1.48% |
 | 2026-09-30 | 4–136 | 12 | ✅ Exact hit | +0.53 | 0.95% |
