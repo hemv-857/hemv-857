@@ -12,7 +12,7 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=20261003" alt="Hire probability 0.05% (analyst rating: STRONG SELL). Streak: 0." width="820">
+<img src="assets/ticker.svg?v=5d533c5e" alt="Hire probability 0.05% (analyst rating: STRONG SELL). Streak: 0." width="820">
 
 </div>
 

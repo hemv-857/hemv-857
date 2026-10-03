@@ -27,6 +27,7 @@ import argparse
 import json
 import os
 import random
+import hashlib
 import re
 import sys
 import textwrap
@@ -673,7 +674,9 @@ def render_svg(state: dict) -> str:
 # README block
 # --------------------------------------------------------------------------- #
 def render_block(state: dict) -> str:
-    stamp = (state.get("updated") or "0").replace("-", "")
+    # Content hash, not the date: camo caches images by URL, so a same-day fix
+    # would otherwise keep serving the stale ticker.
+    stamp = hashlib.sha1(render_svg(state).encode()).hexdigest()[:8]
     p = state["probability"]
     label, _ = rating(p)
     alt = f"Hire probability {p:.2f}% (analyst rating: {label}). Streak: {state['streak']}."
