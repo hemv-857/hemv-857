@@ -12,31 +12,31 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=f064eab5" alt="Hire probability 0.55% (analyst rating: STRONG SELL). 61 commits in 3 sessions · 20/day · never missed a day. Streak: 1." width="640">
+<img src="assets/ticker.svg?v=cf9dbcaa" alt="Hire probability 2.92% (analyst rating: SELL). 61 commits in 3 sessions · 20/day · never missed a day. Streak: 3." width="640">
 
 </div>
 
 <br>
 
-*3 sessions · 33% hit rate · best streak 1 · 0 exact / 0 near / 1 beat / 2 miss*
+*3 sessions · 100% hit rate · best streak 3 · 2 exact / 0 near / 1 beat / 0 miss*
 
-> 📊 2026-09 earnings report: 1 sessions, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
+> 📊 2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
-| Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
+| Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-10-03** (today) | 20 | ⏳ | Market open | | |
-| 2026-10-02 | 11 | 40 | 🚀 Beat | +0.50 | 0.55% |
-| 2026-10-01 | 22 | 9 | ❌ Miss ⌄floor | -0.25 | 0.05% |
-| 2026-09-30 | 39 | 12 | ❌ Miss | -0.25 | 0.17% |
+| **2026-10-03** (today) | 9–40 | ⏳ | Market open | | |
+| 2026-10-02 | 4–29 | 40 | 🚀 Beat | +0.50 | 2.92% |
+| 2026-10-01 | 4–94 | 9 | ✅ Exact hit | +1.00 | 2.42% |
+| 2026-09-30 | 4–136 | 12 | ✅ Exact hit | +1.00 | 1.42% |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>
 
-- Every day at 00:05 IST a GitHub Action **predicts** how many commits I'll make that day (rounded 7-day average).
+- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last 7 days. Anything inside is a hit — roughly 4 days in 5.
 - The next midnight it fetches my **real** commit count and settles the trade.
-- Exact hit: **+1** pts. Off by one: **+0.5** pts. Streaks add a small bonus.
+- Inside the range: **+1** pts. Within 1 of the edge: **+0.5** pts. Streaks add a small bonus.
 - Miss: **-0.25** pts. Zero commits after predicting some: **-0.5** pts.
-- Beat the forecast by more than 1 commit and the probability **rises**: **+0.5** pts. Shipping more than predicted is the whole pitch, so overachieving is never a miss.
+- Beat the range by more than 1 and the probability **rises**: **+0.5** pts. Shipping more than anything done all week is the whole pitch, so overachieving is never a miss.
 - Market manipulation means one thing only: 10+ commits within 60 minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **-1.5** pts.
 - **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.
 - **Monthly:** on the 1st, an earnings report summarises the previous month.

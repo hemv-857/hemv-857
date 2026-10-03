@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Test
+        run: python scripts/test_hire_exchange.py
+
       - name: Settle yesterday, predict today
         env:
           # Optional: add a PAT as repo secret GH_PAT to count private-repo work.

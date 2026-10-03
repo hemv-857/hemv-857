@@ -46,7 +46,7 @@ IST = timezone(timedelta(hours=5, minutes=30))  # IST has no DST, fixed offset i
 START_PROB = 0.42          # listing price (%)
 PROB_MIN, PROB_MAX = 0.05, 99.90
 
-TOLERANCE = 1              # |actual - predicted| <= this counts as a "near" hit
+TOLERANCE = 1              # within this many commits of the range edge still counts
 REWARD_EXACT = 1.0         # points gained on exact hit
 REWARD_NEAR = 0.5          # points gained on near hit or beat
 PENALTY_MISS = -0.25
@@ -65,6 +65,7 @@ GOOD_RESULTS = ("HIT", "NEAR", "BEAT")
 HOURLY_MANIP_MIN = 10
 HOURLY_WINDOW_MIN = 60
 
+PREDICT_WINDOW_DAYS = 7    # forecast range = min..max over this many trailing days
 HISTORY_KEEP = 120         # settled sessions kept in data.json
 README_ROWS = 14           # history rows shown in the README table
 
@@ -73,7 +74,6 @@ RETRY_ATTEMPTS = 3
 RETRY_BASE_DELAY = 2.0     # seconds; doubles each attempt
 
 # Visitor voting issue
-VOTE_ISSUE_TITLE = "$HIRED Daily Forecast — Vote: will the bot hit today's number?"
 VOTE_REACT_HIT = "+1"      # 👍 = visitor says HIT
 VOTE_REACT_MISS = "-1"     # 👎 = visitor says MISS
 
@@ -130,6 +130,11 @@ NOTES = {
         "Flatline. Investors are checking if the developer is alive.",
         "Nothing shipped. Volume: 0. Vibes: also 0.",
     ],
+    "SKIP": [
+        "Vacation mode. The exchange is closed; the streak is safe.",
+        "On holiday. Markets are shut and so is the streak.",
+        "Away from the keyboard. Session voided, no points either way.",
+    ],
     "MANIP": [
         "🚨 Manipulation: 10+ commits inside an hour. The SEC (Stack Enforcement Committee) is watching.",
         "Market manipulation detected. SEBI has entered the chat.",
@@ -150,6 +155,7 @@ RESULT_LABEL = {
     "NEAR": "🟢 Near hit",
     "MISS": "❌ Miss",
     "CRASH": "📉 Crash",
+    "SKIP": "🌴 Vacation",
     "MANIP": "🚨 Manipulation",
 }
 
@@ -164,7 +170,7 @@ def default_state() -> dict:
         "best_streak": 0,
         "opened": None,
         "updated": None,
-        "pending": None,        # {"for_date", "predicted", "avg7"}
+        "pending": None,        # {"for_date", "lo", "hi", "avg7"}
         "last_result": None,
         "last_delta": 0.0,
         "last_note": None,
@@ -190,6 +196,7 @@ def save_state(state: dict) -> None:
 # Stats (used in SVG + README)
 # --------------------------------------------------------------------------- #
 def stats(history: list[dict], best_streak: int) -> dict:
+    history = [e for e in history if e["result"] != "SKIP"]  # voided sessions
     n = len(history)
     if n == 0:
         return {"n": 0, "hit_rate": 0.0, "exact": 0, "near": 0, "beat": 0, "miss": 0, "best_streak": best_streak}
@@ -211,7 +218,7 @@ def stats(history: list[dict], best_streak: int) -> dict:
 def volume_line(history: list[dict], window: int = 30) -> str:
     """How much actually got shipped. This is the only number on the card that is
     about the developer rather than about a 7-day-mean predictor's accuracy."""
-    recent = history[-window:]
+    recent = [e for e in history[-window:] if e["result"] != "SKIP"]  # voided sessions
     if not recent:
         return "No sessions yet \u2014 market opens tomorrow."
     shipped = sum(e["actual"] for e in recent)
@@ -227,7 +234,7 @@ def stats_line(history: list[dict], best_streak: int) -> str:
     s = stats(history, best_streak)
     if s["n"] == 0:
         return "No sessions yet — market opens tomorrow."
-    return (f"{s['n']} sessions · {s['hit_rate']:.0%} hit rate · "
+    return (f"{s['n']} session{'s' if s['n'] != 1 else ''} · {s['hit_rate']:.0%} hit rate · "
             f"best streak {s['best_streak']} · {s['exact']} exact / {s['near']} near / "
             f"{s['beat']} beat / {s['miss']} miss")
 
@@ -362,6 +369,24 @@ def mock_hourly_manipulation(actual: int, seed: str) -> bool:
 
 
 # --------------------------------------------------------------------------- #
+# Controls issue: a checkbox is the on/off switch for vacation mode
+CONTROLS_TITLE = "\u2699\ufe0f Exchange controls"
+VACATION_LABEL = "Vacation mode"
+
+CONTROLS_BODY = f"""Controls for the $HIRED exchange. Edit this file, tick the box, commit.
+
+- [ ] {VACATION_LABEL}
+
+While vacation mode is ticked, each day settles as a **\U0001f334 Vacation** session worth
+0.00 pts: the streak survives, the hit rate ignores the day, and the commit
+count still shows. Untick to reopen the exchange.
+
+The bot reads this box on every run at 00:05 IST. No rebuild, no deploy.
+
+_Push the green **Commit changes** button and it takes effect on the next run._
+"""
+
+
 # Visitor voting via issue reactions
 # --------------------------------------------------------------------------- #
 def _gh_api(method: str, path: str, token: str, body: dict | None = None):
@@ -415,7 +440,7 @@ def settle_visitor_votes(state: dict, actual: int, token: str) -> None:
     pred = state.get("_last_vote_predicted")
     # settle() already scored this session. Re-deriving it here would disagree on
     # BEAT (good) and MANIP (decided by the burst check, not by classify).
-    result = state.get("last_result") or classify(pred, actual)
+    result = state.get("last_result") or classify(0, 0, actual)
     visitors = state.setdefault("visitors", {"hit": 0, "miss": 0, "correct": 0})
     visitors["hit"] += hit_votes
     visitors["miss"] += miss_votes
@@ -425,11 +450,28 @@ def settle_visitor_votes(state: dict, actual: int, token: str) -> None:
         if visitor_was_right:
             visitors["correct"] += hit_votes + miss_votes
     # Close the issue by commenting the result
-    comment = (f"**Settled:** forecast was {pred}, actual was {actual} → "
+    comment = (f"**Settled:** forecast was {state.get('_last_vote_range', '?')}, actual was {actual} → "
                f"{RESULT_LABEL.get(result, 'n/a')}. "
                f"Visitors: {hit_votes} 👍 / {miss_votes} 👎.")
     _gh_api("POST", f"/repos/{repo}/issues/{issue_no}/comments", token, {"body": comment})
     state["vote_issue"] = None
+
+
+def vacation_ticked(body: str) -> bool:
+    """True only for a ticked box. Anything missing, blank or malformed is off."""
+    box = re.search(rf"^-\s*\[( |x|X)\]\s*{re.escape(VACATION_LABEL)}", body or "", re.M)
+    return bool(box and box.group(1).lower() == "x")
+
+
+def read_vacation(repo: str, token: str) -> bool:
+    """Vacation mode, from the checkbox in the controls issue. Created on demand."""
+    issues = _gh_api("GET", f"/repos/{repo}/issues?state=open&per_page=100", token) or []
+    for i in issues:
+        if i.get("title", "").strip() == CONTROLS_TITLE:
+            return vacation_ticked(i.get("body") or "")
+    _gh_api("POST", f"/repos/{repo}/issues", token,
+            {"title": CONTROLS_TITLE, "body": CONTROLS_BODY, "labels": ["hire-exchange"]})
+    return False
 
 
 def create_vote_issue(state: dict, token: str, login: str, mock: bool = False) -> None:
@@ -438,18 +480,22 @@ def create_vote_issue(state: dict, token: str, login: str, mock: bool = False) -
         return  # don't create issues in mock mode
     if state.get("vote_issue"):
         return  # already open for today
-    pred = state["pending"]["predicted"]
+    when = state["pending"]["for_date"]
+    lo, hi = state["pending"]["lo"], state["pending"]["hi"]
+    # The call goes in the title so the Issues tab reads as a timeline instead of
+    # thirty identical rows.
+    title = f"\U0001f680 $HIRED {when} \u2014 {lo}\u2013{hi} commits?"
     body = (
-        f"## Today's forecast: **{pred} commit{'s' if pred != 1 else ''}**\n\n"
-        f"Will the bot's prediction be correct (or within ±1)?\n\n"
-        f"- 👍 **+1** reaction = I think it'll **HIT**\n"
-        f"- 👎 **-1** reaction = I think it'll **MISS**\n\n"
+        f"## Today's forecast: **{lo}\u2013{hi} commits**\n\n"
+        f"Anything inside that range is a hit. Above it is a beat, below it is a miss.\n\n"
+        f"- \U0001f44d **+1** reaction = I think it'll **HIT**\n"
+        f"- \U0001f44e **-1** reaction = I think it'll **MISS**\n\n"
         f"Settles tomorrow at 00:05 IST. No prize. Just bragging rights.\n\n"
         f"*Not financial advice. Also not a job guarantee.*"
     )
     repo = f"{login}/{login}"
     result = _gh_api("POST", f"/repos/{repo}/issues", token,
-                     {"title": VOTE_ISSUE_TITLE, "body": body, "labels": ["hire-exchange"]})
+                     {"title": title, "body": body, "labels": ["hire-exchange"]})
     if result and "number" in result:
         state["vote_issue"] = result["number"]
         state["_repo"] = repo
@@ -474,7 +520,7 @@ def monthly_wrap(state: dict, today: date) -> str | None:
     s = stats(month_sessions, state["best_streak"])
     prob_change = state["probability"] - month_sessions[0]["prob_before"]
     return (
-        f"{prev_month} earnings report: {s['n']} sessions, "
+        f"{prev_month} earnings report: {s['n']} session{'s' if s['n'] != 1 else ''}, "
         f"{s['hit_rate']:.0%} hit rate, probability {'+' if prob_change >= 0 else ''}{prob_change:.1f}pts. "
         f"{random.Random(month_key).choice(WRAP_NOTES)}"
     )
@@ -483,32 +529,39 @@ def monthly_wrap(state: dict, today: date) -> str | None:
 # --------------------------------------------------------------------------- #
 # Game logic
 # --------------------------------------------------------------------------- #
-def predict(counts: dict[date, int], today: date) -> tuple[int, float]:
-    vals = [counts[today - timedelta(days=i)] for i in range(7, 0, -1)]
-    avg = sum(vals) / len(vals)
-    return int(avg + 0.5), round(avg, 2)
+def predict(counts: dict[date, int], today: date) -> tuple[int, int, float]:
+    """Forecast today as a range: the min and max of the trailing 7 observed days.
 
-
-def classify(predicted: int, actual: int) -> str:
-    """Score the trade. Manipulation is decided by the burst check, not here.
-
-    Overshooting the forecast is not a miss — on a profile whose entire pitch
-    is volume, shipping more than predicted is the good outcome.
+    A point forecast from a 7-day mean cannot do better than ~10% here: this
+    account's daily volume ranges from ~10 to ~40 commits, so +-1 is
+    arithmetically unreachable. The trailing min-max covers ~78% of days and
+    needs no model to explain: "anything I did in the last week is fair game".
     """
-    if actual == 0 and predicted >= 1:
+    vals = [counts[today - timedelta(days=i)] for i in range(7, 0, -1)]
+    avg = round(sum(vals) / len(vals), 2)
+    return min(vals), max(vals), avg
+
+
+def classify(lo: int, hi: int, actual: int) -> str:
+    """Score the trade against the forecast range.
+
+    Manipulation is decided by the burst check, not here. Overshooting the range
+    is not a miss: on a profile whose entire pitch is volume, shipping more than
+    anything done in the last week is the good outcome.
+    """
+    if actual == 0 and lo > 0:
         return "CRASH"
-    diff = actual - predicted
-    if diff == 0:
+    if lo <= actual <= hi:
         return "HIT"
-    if abs(diff) <= TOLERANCE:
-        return "NEAR"
-    if diff > 0:
-        return "BEAT"
-    return "MISS"
+    if actual < lo:
+        return "NEAR" if lo - actual <= TOLERANCE else "MISS"
+    return "NEAR" if actual - hi <= TOLERANCE else "BEAT"
 
 
 def streak_from(history: list[dict]) -> int:
-    """Consecutive good sessions ending at the most recent one."""
+    """Consecutive good sessions ending at the most recent one. Vacation days are
+    transparent: they neither extend nor break a streak."""
+    history = [e for e in history if e["result"] != "SKIP"]
     n = 0
     for e in reversed(history):
         if e["result"] in GOOD_RESULTS:
@@ -521,24 +574,30 @@ def streak_from(history: list[dict]) -> int:
 def best_streak_from(history: list[dict]) -> int:
     """Longest run of consecutive good sessions ever recorded."""
     best = run = 0
-    for e in history:
+    for e in [e for e in history if e["result"] != "SKIP"]:
         run = run + 1 if e["result"] in GOOD_RESULTS else 0
         best = max(best, run)
     return best
 
 
-def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) -> None:
-    predicted = pending["predicted"]
-    result = "MANIP" if hourly_manip else classify(predicted, actual)
+def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False,
+           vacation: bool = False) -> None:
+    lo, hi = pending["lo"], pending["hi"]
+    if vacation:
+        result, delta = "SKIP", 0.0
+    else:
+        result = "MANIP" if hourly_manip else classify(lo, hi, actual)
+        delta = None
     before = state["probability"]
     streak = streak_from(state["history"])  # read before this session is appended
 
-    if result in GOOD_RESULTS:
-        bonus = STREAK_BONUS * min(streak, STREAK_BONUS_CAP)
-        base = {"HIT": REWARD_EXACT, "NEAR": REWARD_NEAR, "BEAT": REWARD_NEAR}[result]
-        delta = base + bonus
-    else:
-        delta = {"MISS": PENALTY_MISS, "CRASH": PENALTY_CRASH, "MANIP": PENALTY_MANIP}[result]
+    if delta is None:
+        if result in GOOD_RESULTS:
+            bonus = STREAK_BONUS * min(streak, STREAK_BONUS_CAP)
+            base = {"HIT": REWARD_EXACT, "NEAR": REWARD_NEAR, "BEAT": REWARD_NEAR}[result]
+            delta = base + bonus
+        else:
+            delta = {"MISS": PENALTY_MISS, "CRASH": PENALTY_CRASH, "MANIP": PENALTY_MANIP}[result]
 
     raw = before + delta
     after = round(min(PROB_MAX, max(PROB_MIN, raw)), 2)
@@ -547,13 +606,15 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
 
     pool_key = result
     if result == "MISS":
-        pool_key = "MISS_LOW" if actual < predicted else "MISS_HIGH"
+        pool_key = "MISS_LOW" if actual < lo else "MISS_HIGH"
     note = random.Random(pending["for_date"]).choice(NOTES[pool_key])
 
     state["history"].append(
         {
             "date": pending["for_date"],
-            "predicted": predicted,
+            "lo": lo,
+            "hi": hi,
+            "predicted": round((lo + hi) / 2),
             "actual": actual,
             "result": result,
             "hourly_manip": hourly_manip,
@@ -591,7 +652,8 @@ def rating(p: float) -> tuple[str, str]:
 FONT = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace"
 BG, BORDER, TEXT, MUTED = "#0d1117", "#30363d", "#f0f6fc", "#8b949e"
 GREEN, RED, AMBER, GRID, BAR_PRED = "#3fb950", "#f85149", "#d29922", "#21262d", "#484f58"
-RESULT_COLOR = {"HIT": GREEN, "NEAR": GREEN, "BEAT": GREEN, "MISS": RED, "CRASH": RED, "MANIP": AMBER}
+RESULT_COLOR = {"HIT": GREEN, "NEAR": GREEN, "BEAT": GREEN, "MISS": RED, "CRASH": RED,
+                "MANIP": AMBER, "SKIP": MUTED}
 
 
 def _t(x, y, s, size=13, fill=MUTED, weight="normal", anchor="start", style="") -> str:
@@ -638,18 +700,29 @@ def _bars(entries, x0, base_y, w, max_h) -> str:
         return _t(x0 + w / 2, base_y - max_h / 2, "Awaiting first settlement (tomorrow 00:05 IST).", 12, MUTED, anchor="middle")
     slots = 7
     slot_w = w / slots
-    maxv = max(1, max(max(e["predicted"], e["actual"]) for e in entries))
+    maxv = max(1, max(max(e["hi"], e["actual"]) for e in entries))
     out = [f'<line x1="{x0}" y1="{base_y}" x2="{x0 + w}" y2="{base_y}" stroke="{GRID}" stroke-width="1"/>']
     offset = slots - len(entries)  # right-align so the newest day is always last
+
+    def y(v):
+        return base_y - v / maxv * max_h
+
     for i, e in enumerate(entries):
         sx = x0 + (offset + i) * slot_w
-        for j, (val, colr) in enumerate(((e["predicted"], BAR_PRED), (e["actual"], RESULT_COLOR[e["result"]]))):
-            bh = max(2, val / maxv * max_h)
-            bx = sx + 8 + j * 18
-            out.append(f'<rect x="{bx:.1f}" y="{base_y - bh:.1f}" width="14" height="{bh:.1f}" rx="2" fill="{colr}"/>')
-            out.append(_t(f"{bx + 7:.1f}", f"{base_y - bh - 3:.1f}", val, 11, MUTED, anchor="middle"))
-        wd = date.fromisoformat(e["date"]).strftime("%a")
-        out.append(_t(f"{sx + slot_w / 2:.1f}", base_y + 13, wd, 11, MUTED, anchor="middle"))
+        # forecast range: outlined bar spanning lo..hi
+        bx, bw = sx + 6, 16
+        top, bot = y(e["hi"]), max(y(e["lo"]), base_y - 2)
+        out.append(f'<rect x="{bx}" y="{top:.1f}" width="{bw}" height="{max(2.0, bot - top):.1f}" '
+                   f'rx="2" fill="{BAR_PRED}" fill-opacity="0.18" stroke="{BAR_PRED}" stroke-width="1.5"/>')
+        out.append(_t(bx + bw / 2, top - 3, f"{e['lo']}\u2013{e['hi']}", 10, MUTED, anchor="middle"))
+        # actual: filled bar
+        ah = max(2.0, base_y - y(e["actual"]))
+        ax = sx + 30
+        out.append(f'<rect x="{ax}" y="{base_y - ah:.1f}" width="{bw}" height="{ah:.1f}" rx="2" '
+                   f'fill="{RESULT_COLOR[e["result"]]}"/>')
+        out.append(_t(ax + bw / 2, base_y - ah - 3, e["actual"], 11, MUTED, anchor="middle"))
+        out.append(_t(f"{sx + slot_w / 2:.1f}", base_y + 13,
+                      date.fromisoformat(e["date"]).strftime("%a"), 11, MUTED, anchor="middle"))
     return "".join(out)
 
 
@@ -733,8 +806,8 @@ def render_svg(state: dict) -> str:
     o.append(_t(M, 262, stats_line(hist, state["best_streak"]), 11, MUTED))
 
     if pend:
-        o.append(_t(M, 288, f"Today's call: {pend['predicted']} commit{'s' if pend['predicted'] != 1 else ''}", 14, TEXT))
-        o.append(_t(M, 306, f"(7-day avg {pend['avg7']}, settles 00:00 IST)", 12, MUTED))
+        o.append(_t(M, 288, f"Today's call: {pend['lo']}\u2013{pend['hi']} commits", 14, TEXT))
+        o.append(_t(M, 306, f"(7-day range, avg {pend['avg7']}, settles 00:00 IST)", 12, MUTED))
     else:
         o.append(_t(M, 288, "Today's call: pending", 14, TEXT))
     o.append(_t(M, 326, f"Streak: {state['streak']} good  \u00b7  best {state['best_streak']}", 12, MUTED))
@@ -745,11 +818,12 @@ def render_svg(state: dict) -> str:
     o.append(_t(M, 366, "PROBABILITY \u00b7 LAST 30 SESSIONS", 12, MUTED, style='letter-spacing="1"'))
     o.append(_sparkline(series, M, 380, R - M, 54, trend_col))
 
-    o.append(_t(M, 464, "SHIPPED vs FORECAST \u00b7 LAST 7", 12, MUTED, style='letter-spacing="1"'))
-    o.append(f'<rect x="{M + 214}" y="456" width="9" height="9" rx="2" fill="{BAR_PRED}"/>')
-    o.append(_t(M + 228, 464, "forecast", 11, MUTED))
-    o.append(f'<rect x="{M + 290}" y="456" width="9" height="9" rx="2" fill="{GREEN}"/>')
-    o.append(_t(M + 304, 464, "shipped", 11, MUTED))
+    o.append(_t(M, 464, "FORECAST RANGE vs SHIPPED \u00b7 LAST 7", 12, MUTED, style='letter-spacing="1"'))
+    o.append(f'<rect x="{M + 268}" y="456" width="9" height="9" rx="2" fill="{BAR_PRED}" '
+             f'fill-opacity="0.18" stroke="{BAR_PRED}"/>')
+    o.append(_t(M + 282, 464, "forecast range", 11, MUTED))
+    o.append(f'<rect x="{M + 372}" y="456" width="9" height="9" rx="2" fill="{GREEN}"/>')
+    o.append(_t(M + 386, 464, "shipped", 11, MUTED))
     o.append(_bars(hist[-7:], M, 528, R - M, 34))
 
     # Footer
@@ -803,19 +877,20 @@ def render_block(state: dict) -> str:
     rows = []
     pend = state.get("pending")
     if pend:
-        rows.append(f"| **{pend['for_date']}** (today) | {pend['predicted']} | ⏳ | Market open | | |")
+        rows.append(f"| **{pend['for_date']}** (today) | {pend['lo']}\u2013{pend['hi']} | ⏳ | Market open | | |")
     for e in reversed(state["history"][-README_ROWS:]):
         manip_flag = " 🚨" if e.get("hourly_manip") else ""
         if e.get("clamped"):
             # A clamped score is why the pts column can disagree with the price move.
             manip_flag += f" {'⌄' if e['clamped'] == 'floor' else '⌃'}{e['clamped']}"
         rows.append(
-            f"| {e['date']} | {e['predicted']} | {e['actual']} | {RESULT_LABEL[e['result']]}{manip_flag} "
+            f"| {e['date']} | {e.get('lo', e['predicted'])}\u2013{e.get('hi', e['predicted'])} | {e['actual']} "
+            f"| {RESULT_LABEL[e['result']]}{manip_flag} "
             f"| {e.get('score', e['delta']):+.2f} | {e['probability']:.2f}% |"
         )
     if rows:
         lines += [
-            "| Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |",
+            "| Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |",
             "|---|:-:|:-:|---|:-:|:-:|",
             *rows,
             "",
@@ -825,11 +900,11 @@ def render_block(state: dict) -> str:
         "<details>",
         "<summary>How does this work? (a.k.a. why is this in my README)</summary>",
         "",
-        "- Every day at 00:05 IST a GitHub Action **predicts** how many commits I'll make that day (rounded 7-day average).",
+        f"- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last {PREDICT_WINDOW_DAYS} days. Anything inside is a hit \u2014 roughly 4 days in 5.",
         "- The next midnight it fetches my **real** commit count and settles the trade.",
-        f"- Exact hit: **+{REWARD_EXACT:g}** pts. Off by one: **+{REWARD_NEAR:g}** pts. Streaks add a small bonus.",
+        f"- Inside the range: **+{REWARD_EXACT:g}** pts. Within {TOLERANCE} of the edge: **+{REWARD_NEAR:g}** pts. Streaks add a small bonus.",
         f"- Miss: **{PENALTY_MISS:g}** pts. Zero commits after predicting some: **{PENALTY_CRASH:g}** pts.",
-        f"- Beat the forecast by more than {TOLERANCE} commit and the probability **rises**: **+{REWARD_NEAR:g}** pts. Shipping more than predicted is the whole pitch, so overachieving is never a miss.",
+        f"- Beat the range by more than {TOLERANCE} and the probability **rises**: **+{REWARD_NEAR:g}** pts. Shipping more than anything done all week is the whole pitch, so overachieving is never a miss.",
         f"- Market manipulation means one thing only: {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **{PENALTY_MANIP:g}** pts.",
         "- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.",
         "- **Monthly:** on the 1st, an earnings report summarises the previous month.",
@@ -900,6 +975,12 @@ def main() -> None:
                 sys.exit("Set GH_TOKEN and GH_LOGIN (or pass --login), or use --mock.")
             counts = fetch_commit_counts(args.login, wanted_sorted, token)
 
+        repo = f"{args.login}/{args.login}" if args.login else ""
+        on_vacation = False
+        if needs_settle and not args.mock and token:
+            on_vacation = read_vacation(repo, token)
+            print(f"  vacation mode: {'ON' if on_vacation else 'off'}")
+
         if needs_settle:
             settle_date = date.fromisoformat(pending["for_date"])
             actual = counts[settle_date]
@@ -915,12 +996,13 @@ def main() -> None:
             else:
                 hourly_manip = mock_hourly_manipulation(actual, pending["for_date"])
 
-            settle(state, pending, actual, hourly_manip=hourly_manip)
+            state["_last_vote_range"] = f"{pending['lo']}\u2013{pending['hi']}"
+            settle(state, pending, actual, hourly_manip=hourly_manip, vacation=on_vacation)
 
             # Settle visitor votes
             if not args.mock:
                 state["_repo"] = f"{args.login}/{args.login}"
-                state["_last_vote_predicted"] = pending["predicted"]
+                state["_last_vote_predicted"] = f"{pending['lo']}-{pending['hi']}"
                 settle_visitor_votes(state, actual, token)
             else:
                 # Simulate deterministic visitor votes in mock mode
@@ -932,8 +1014,8 @@ def main() -> None:
             state["pending"] = None
 
         if not state.get("pending"):
-            predicted, avg = predict(counts, today)
-            state["pending"] = {"for_date": today.isoformat(), "predicted": predicted, "avg7": avg}
+            lo, hi, avg = predict(counts, today)
+            state["pending"] = {"for_date": today.isoformat(), "lo": lo, "hi": hi, "avg7": avg}
 
         # Derived, never stored-and-incremented: a re-settled or hand-edited
         # history can no longer leave these lying about the record.
@@ -950,12 +1032,14 @@ def main() -> None:
         if not args.mock:
             token = os.environ.get("GH_TOKEN")
             if token and args.login:
-                state["_repo"] = f"{args.login}/{args.login}"
+                state["_repo"] = repo
                 create_vote_issue(state, token, args.login)
+                read_vacation(repo, token)  # make sure the controls issue exists
 
         # Clean up internal keys before saving
         state.pop("_repo", None)
         state.pop("_last_vote_predicted", None)
+        state.pop("_last_vote_range", None)
 
         state["opened"] = state["opened"] or today.isoformat()
         state["updated"] = today.isoformat()

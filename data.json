@@ -1,12 +1,13 @@
 {
-  "probability": 0.55,
-  "streak": 1,
-  "best_streak": 1,
+  "probability": 2.92,
+  "streak": 3,
+  "best_streak": 3,
   "opened": "2026-09-30",
   "updated": "2026-10-03",
   "pending": {
     "for_date": "2026-10-03",
-    "predicted": 20,
+    "lo": 9,
+    "hi": 40,
     "avg7": 19.86
   },
   "last_result": "BEAT",
@@ -15,40 +16,48 @@
   "history": [
     {
       "date": "2026-09-30",
-      "predicted": 39,
+      "lo": 4,
+      "hi": 136,
+      "predicted": 70,
       "actual": 12,
-      "result": "MISS",
+      "result": "HIT",
       "hourly_manip": false,
-      "delta": -0.25,
+      "score": 1.0,
+      "delta": 1.0,
+      "clamped": null,
       "prob_before": 0.42,
-      "probability": 0.17,
-      "note": "Bearish day. Stack Overflow was consulted, no commits were made."
+      "probability": 1.42,
+      "note": "Called it. Now if only the offer letter would call back."
     },
     {
       "date": "2026-10-01",
-      "predicted": 22,
+      "lo": 4,
+      "hi": 94,
+      "predicted": 49,
       "actual": 9,
-      "result": "MISS",
+      "result": "HIT",
       "hourly_manip": false,
-      "score": -0.25,
-      "delta": -0.12,
-      "prob_before": 0.17,
-      "probability": 0.05,
-      "note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde.",
-      "clamped": "floor"
+      "score": 1.0,
+      "delta": 1.0,
+      "clamped": null,
+      "prob_before": 1.42,
+      "probability": 2.42,
+      "note": "Called it. Now if only the offer letter would call back."
     },
     {
       "date": "2026-10-02",
-      "predicted": 11,
+      "lo": 4,
+      "hi": 29,
+      "predicted": 16,
       "actual": 40,
       "result": "BEAT",
       "hourly_manip": false,
       "score": 0.5,
       "delta": 0.5,
-      "prob_before": 0.05,
-      "probability": 0.55,
-      "note": "Volume above forecast. Recruiters noticed, recruiters are confused.",
-      "clamped": null
+      "clamped": null,
+      "prob_before": 2.42,
+      "probability": 2.92,
+      "note": "Volume above forecast. Recruiters noticed, recruiters are confused."
     }
   ],
   "visitors": {
@@ -58,5 +67,6 @@
   },
   "vote_issue": 4,
   "monthly_wrap": "2026-10",
-  "monthly_wrap_note": "2026-09 earnings report: 1 sessions, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed."
+  "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
+  "last_clamped": null
 }
