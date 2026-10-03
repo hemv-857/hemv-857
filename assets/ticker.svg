@@ -10,7 +10,7 @@
 <line x1="32" y1="56" x2="788" y2="56" stroke="#21262d" stroke-width="1"/>
 <text x="32" y="90" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" letter-spacing="1">HIRE PROBABILITY</text>
 <text x="32" y="152" font-size="64" fill="#f0f6fc" font-weight="bold" text-anchor="start" >0.05%</text>
-<text x="32" y="184" font-size="18" font-weight="bold" fill="#f85149">■ +0.00<tspan fill="#8b949e" font-weight="normal" font-size="14"> pts  ·  MANIPULATION</tspan></text>
+<text x="32" y="184" font-size="18" font-weight="bold" fill="#f85149">▼ -1.50<tspan fill="#8b949e" font-weight="normal" font-size="14"> pts  ·  MANIPULATION</tspan></text>
 <rect x="32" y="202" width="237" height="28" rx="6" fill="#f85149" fill-opacity="0.14" stroke="#f85149"/>
 <text x="44" y="221" font-size="13" fill="#f85149" font-weight="bold" text-anchor="start" >ANALYST RATING: STRONG SELL</text>
 <text x="32" y="250" font-size="12" fill="#8b949e" font-weight="normal" text-anchor="start" >3 sessions · 0% hit rate · best streak 0 · 0 exact / 0 near / 3 miss</text>

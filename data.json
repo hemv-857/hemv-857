@@ -10,7 +10,7 @@
     "avg7": 19.86
   },
   "last_result": "MANIP",
-  "last_delta": 0.0,
+  "last_delta": -1.5,
   "last_note": "Suspicious volume spike. Empty commits are not a personality.",
   "history": [
     {
@@ -30,6 +30,7 @@
       "actual": 9,
       "result": "MISS",
       "hourly_manip": false,
+      "score": -0.25,
       "delta": -0.12,
       "prob_before": 0.17,
       "probability": 0.05,
@@ -41,6 +42,7 @@
       "actual": 40,
       "result": "MANIP",
       "hourly_manip": false,
+      "score": -1.5,
       "delta": 0.0,
       "prob_before": 0.05,
       "probability": 0.05,

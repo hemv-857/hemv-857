@@ -25,8 +25,8 @@
 | Date (IST) | Predicted | Actual | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
 | **2026-10-03** (today) | 20 | ⏳ | Market open | | |
-| 2026-10-02 | 11 | 40 | 🚨 Manipulation | +0.00 | 0.05% |
-| 2026-10-01 | 22 | 9 | ❌ Miss | -0.12 | 0.05% |
+| 2026-10-02 | 11 | 40 | 🚨 Manipulation | -1.50 | 0.05% |
+| 2026-10-01 | 22 | 9 | ❌ Miss | -0.25 | 0.05% |
 | 2026-09-30 | 39 | 12 | ❌ Miss | -0.25 | 0.17% |
 
 <details>

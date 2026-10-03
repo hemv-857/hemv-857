@@ -439,7 +439,7 @@ def predict(counts: dict[date, int], today: date) -> tuple[int, float]:
 
 
 def classify(predicted: int, actual: int) -> str:
-    if predicted >= 1 and actual >= MANIP_MIN_COMMITS and actual >= MANIP_MULTIPLIER * predicted:
+    if actual >= MANIP_MIN_COMMITS and actual >= MANIP_MULTIPLIER * predicted:
         return "MANIP"
     if actual == 0 and predicted >= 1:
         return "CRASH"
@@ -481,6 +481,7 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
             "actual": actual,
             "result": result,
             "hourly_manip": hourly_manip,
+            "score": round(delta, 2),
             "delta": round(after - before, 2),
             "prob_before": before,
             "probability": after,
@@ -490,7 +491,7 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
     state["history"] = state["history"][-HISTORY_KEEP:]
     state["probability"] = after
     state["last_result"] = result
-    state["last_delta"] = round(after - before, 2)
+    state["last_delta"] = round(delta, 2)
     state["last_note"] = note
 
 
@@ -711,7 +712,7 @@ def render_block(state: dict) -> str:
         manip_flag = " 🚨" if e.get("hourly_manip") else ""
         rows.append(
             f"| {e['date']} | {e['predicted']} | {e['actual']} | {RESULT_LABEL[e['result']]}{manip_flag} "
-            f"| {e['delta']:+.2f} | {e['probability']:.2f}% |"
+            f"| {e.get('score', e['delta']):+.2f} | {e['probability']:.2f}% |"
         )
     if rows:
         lines += [
