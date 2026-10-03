@@ -54,10 +54,8 @@ PENALTY_MANIP = -1.5       # suspicious spike
 STREAK_BONUS = 0.1         # extra per consecutive hit (after the first)...
 STREAK_BONUS_CAP = 5       # ...up to this many steps
 
-MANIP_MIN_COMMITS = 10     # "market manipulation" if actual >= 10
-MANIP_MULTIPLIER = 3       # ...and actual >= 3x the prediction
-
-# Hourly manipulation: 10+ commits within any 60-minute window = 🚨
+# Market manipulation: a burst of commits inside the profile repo. Overachieving a
+# low forecast is not fraud, so there is no ratio rule.
 HOURLY_MANIP_MIN = 10
 HOURLY_WINDOW_MIN = 60
 
@@ -122,13 +120,11 @@ NOTES = {
         "Nothing shipped. Volume: 0. Vibes: also 0.",
     ],
     "MANIP": [
+        "🚨 Manipulation: 10+ commits inside an hour. The SEC (Stack Enforcement Committee) is watching.",
         "Market manipulation detected. SEBI has entered the chat.",
         "Suspicious volume spike. Empty commits are not a personality.",
-        "Pump and dump alert. Regulators have been notified. By me. Sarcastically.",
-    ],
-    "MANIP_HOURLY": [
-        "🚨 Hourly manipulation: 10+ commits in under an hour. The SEC (Stack Enforcement Committee) is watching.",
         "Volume spike within 60 minutes. Either a deadline or a breakdown. Probably both.",
+        "Pump and dump alert. Regulators have been notified. By me. Sarcastically.",
         "Commits-per-hour exceeds regulatory limits. Please gamble responsibly.",
     ],
     "INIT": [
@@ -277,8 +273,10 @@ def mock_commit_counts(days: list[date]) -> dict[date, int]:
 # Hourly manipulation detection (REST API)
 # --------------------------------------------------------------------------- #
 def fetch_commit_timestamps(login: str, target: date, token: str) -> list[datetime]:
-    """Fetch ISO timestamps of all commits on a given IST day via REST API.
-    Returns sorted datetimes in UTC. Empty list if API fails (graceful)."""
+    """Commit timestamps inside the profile repo for one IST day, sorted UTC.
+    Empty if the API fails (graceful). Scoped to the profile repo on purpose:
+    a burst of commits there games the contribution graph, whereas the same
+    burst spread over real repos is just a work session."""
     s, e = day_bounds_utc(target)
     ts: list[datetime] = []
     page = 1
@@ -440,8 +438,7 @@ def predict(counts: dict[date, int], today: date) -> tuple[int, float]:
 
 
 def classify(predicted: int, actual: int) -> str:
-    if actual >= MANIP_MIN_COMMITS and actual >= MANIP_MULTIPLIER * predicted:
-        return "MANIP"
+    """Score the trade. Manipulation is decided by the burst check, not here."""
     if actual == 0 and predicted >= 1:
         return "CRASH"
     diff = abs(actual - predicted)
@@ -454,7 +451,7 @@ def classify(predicted: int, actual: int) -> str:
 
 def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) -> None:
     predicted = pending["predicted"]
-    result = classify(predicted, actual)
+    result = "MANIP" if hourly_manip else classify(predicted, actual)
     before = state["probability"]
 
     if result in ("HIT", "NEAR"):
@@ -469,9 +466,7 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) 
     state["best_streak"] = max(state["best_streak"], state["streak"])
 
     pool_key = result
-    if hourly_manip:
-        pool_key = "MANIP_HOURLY"
-    elif result == "MISS":
+    if result == "MISS":
         pool_key = "MISS_LOW" if actual < predicted else "MISS_HIGH"
     note = random.Random(pending["for_date"]).choice(NOTES[pool_key])
 
@@ -733,8 +728,7 @@ def render_block(state: dict) -> str:
         "- The next midnight it fetches my **real** commit count and settles the trade.",
         f"- Exact hit: **+{REWARD_EXACT:g}** pts. Off by one: **+{REWARD_NEAR:g}** pts. Streaks add a small bonus.",
         f"- Miss: **{PENALTY_MISS:g}** pts. Zero commits after predicting some: **{PENALTY_CRASH:g}** pts.",
-        f"- {MANIP_MIN_COMMITS}+ commits and {MANIP_MULTIPLIER}x the forecast counts as market manipulation: **{PENALTY_MANIP:g}** pts.",
-        f"- {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes is hourly manipulation: **{PENALTY_MANIP:g}** pts.",
+        f"- Market manipulation means one thing only: {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **{PENALTY_MANIP:g}** pts.",
         "- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.",
         "- **Monthly:** on the 1st, an earnings report summarises the previous month.",
         "- Probability is 100% fiction. The 100% real part: I actually ship code, and I'm actually looking for a job.",
