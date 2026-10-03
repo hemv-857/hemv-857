@@ -408,6 +408,34 @@ def _gh_api(method: str, path: str, token: str, body: dict | None = None):
         return None
 
 
+def _is_vote_issue(title: str) -> bool:
+    """Forecast voting issues, today's format and the pre-2026-10 legacy one."""
+    t = (title or "").strip()
+    return t.startswith("\U0001f680 $HIRED ") or t.startswith("$HIRED Daily Forecast")
+
+
+def _vote_date(title: str) -> str | None:
+    """The YYYY-MM-DD a forecast issue is about, if the title carries one."""
+    m = re.search(r"\$HIRED (\d{4}-\d{2}-\d{2})", title or "")
+    return m.group(1) if m else None
+
+
+def list_vote_issues(repo: str, token: str) -> list[dict]:
+    """Every open forecast issue. Titles are the source of truth, not state: a run
+    that dies before save_state used to leak one issue per failure, forever."""
+    out: list[dict] = []
+    for page in range(1, 6):
+        chunk = _gh_api("GET", f"/repos/{repo}/issues?state=open&per_page=100&page={page}", token) or []
+        out += [i for i in chunk if _is_vote_issue(i.get("title"))]
+        if len(chunk) < 100:
+            break
+    return out
+
+
+def _close_issue(repo: str, issue_no: int, token: str) -> None:
+    _gh_api("PATCH", f"/repos/{repo}/issues/{issue_no}", token, {"state": "closed"})
+
+
 def _count_vote_reactions(repo: str, issue_no: int, token: str) -> tuple[int, int] | None:
     """(hit, miss) reaction totals. None if the first page failed."""
     hit = miss = 0
@@ -454,6 +482,11 @@ def settle_visitor_votes(state: dict, actual: int, token: str) -> None:
                f"{RESULT_LABEL.get(result, 'n/a')}. "
                f"Visitors: {hit_votes} 👍 / {miss_votes} 👎.")
     _gh_api("POST", f"/repos/{repo}/issues/{issue_no}/comments", token, {"body": comment})
+    # Sweep any forecast issues left open by an earlier failed run. Once this
+    # session has settled they are all stale by definition.
+    for i in list_vote_issues(repo, token):
+        if i.get("number") != issue_no:
+            _close_issue(repo, i["number"], token)
     state["vote_issue"] = None
 
 
@@ -478,9 +511,13 @@ def create_vote_issue(state: dict, token: str, login: str, mock: bool = False) -
     """Open today's voting issue so visitors can vote on the forecast."""
     if mock:
         return  # don't create issues in mock mode
-    if state.get("vote_issue"):
-        return  # already open for today
     when = state["pending"]["for_date"]
+    repo = f"{login}/{login}"
+    for i in list_vote_issues(repo, token):
+        if _vote_date(i.get("title")) == when:
+            state["vote_issue"] = i["number"]   # a retry adopts, never duplicates
+            state["_repo"] = repo
+            return
     lo, hi = state["pending"]["lo"], state["pending"]["hi"]
     # The call goes in the title so the Issues tab reads as a timeline instead of
     # thirty identical rows.
@@ -493,7 +530,6 @@ def create_vote_issue(state: dict, token: str, login: str, mock: bool = False) -
         f"Settles tomorrow at 00:05 IST. No prize. Just bragging rights.\n\n"
         f"*Not financial advice. Also not a job guarantee.*"
     )
-    repo = f"{login}/{login}"
     result = _gh_api("POST", f"/repos/{repo}/issues", token,
                      {"title": title, "body": body, "labels": ["hire-exchange"]})
     if result and "number" in result:

@@ -116,6 +116,48 @@ assert h.vacation_ticked(h.CONTROLS_BODY.replace("- [x] " + V, "- [ ] " + V)) is
 for bad in ("", None, "no checkbox here", f"-[ ] {V}", f"- [y] {V}", f"* [x] {V}"):
     assert h.vacation_ticked(bad) is False, bad
 
+# ---------------------------------------------- forecast issues are found by title
+NEW = "\U0001f680 $HIRED 2026-10-03 \u2014 9\u201340 commits?"
+OLD = "$HIRED Daily Forecast \u2014 Vote: will the bot hit today's number?"
+CTRL = "\u2699\ufe0f Exchange controls"
+assert h._is_vote_issue(NEW) and h._is_vote_issue(OLD)
+assert not h._is_vote_issue(CTRL), "the controls issue is not a forecast issue"
+assert not h._is_vote_issue("Bug: ticker shows the wrong delta")
+assert not h._is_vote_issue("")
+assert h._vote_date(NEW) == "2026-10-03"
+assert h._vote_date(OLD) is None, "legacy titles carry no date and must never be adopted as today's"
+
+# list_vote_issues must page, must filter, and must survive a dead API.
+def api_with(pages):
+    def f(method, path, token, body=None):
+        n = int(re.search(r"[?&]page=(\d+)", path).group(1)) if "page=" in path else 1
+        return pages.get(n, [])
+    return f
+h._gh_api = api_with({1: [{"number": 1, "title": OLD}, {"number": 5, "title": CTRL},
+                          {"number": 9, "title": NEW}, {"number": 7, "title": "chore: bump"}]})
+assert [i["number"] for i in h.list_vote_issues("o/o", "t")] == [1, 9]
+h._gh_api = api_with({})
+assert h.list_vote_issues("o/o", "t") == [], "a failed lookup must not raise"
+
+# A retry adopts today's issue instead of opening a second one.
+posted = []
+def api_adopt(method, path, token, body=None):
+    if method == "POST":
+        posted.append(body); return {"number": 42}
+    return [{"number": 9, "title": NEW}]
+h._gh_api = api_adopt
+st = {"pending": {"for_date": "2026-10-03", "lo": 9, "hi": 40, "avg7": 19.86}, "vote_issue": None}
+h.create_vote_issue(st, "t", "o")
+assert st["vote_issue"] == 9 and not posted, (st["vote_issue"], posted)
+# ...and only creates one when there is genuinely nothing for today.
+def api_create(method, path, token, body=None):
+    if method == "POST":
+        posted.append(body); return {"number": 42}
+    return []
+h._gh_api = api_create
+h.create_vote_issue(st, "t", "o")
+assert st["vote_issue"] == 42 and len(posted) == 1 and posted[0]["title"] == NEW
+
 # The SVG must stay parseable XML and fit its canvas, at any price or history.
 def svg_ok(state):
     svg = h.render_svg(state)
