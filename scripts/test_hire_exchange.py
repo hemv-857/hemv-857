@@ -23,15 +23,41 @@ assert h.predict(flat, date(2026, 10, 3))[:2] == (20, 20)
 assert h.classify(3, 60, 12) == "HIT"        # inside the range
 assert h.classify(3, 60, 60) == "HIT"        # edges count as inside
 assert h.classify(3, 60, 3) == "HIT"
-assert h.classify(3, 60, 2) == "NEAR"        # within TOLERANCE of the low edge
-assert h.classify(3, 60, 1) == "MISS"        # one further out is a miss
-assert h.classify(3, 60, 61) == "NEAR"        # ...and the high edge
-assert h.classify(3, 60, 63) == "BEAT"
+assert h.classify(3, 60, 2) == "NEAR"        # one commit short of the floor
+assert h.classify(3, 60, 1) == "MISS"        # further under is a miss
+# Everything above the range is a BEAT - there is no "too much" penalty left.
+assert all(h.classify(3, 60, a) == "BEAT" for a in (61, 63, 64, 100, 10_000))
 assert h.classify(3, 60, 0) == "CRASH"       # zero when the range expected work
 assert h.classify(0, 0, 0) == "HIT"          # a zero-range day cannot crash
-assert h.classify(3, 60, 64) == "BEAT"       # past anything done all week
-assert h.classify(3, 60, 400) == "BEAT"      # and beating it still raises the price
 assert h.classify(20, 40, 5) == "MISS"       # underdelivering costs
+
+# ------------------------------------------------- the reward follows the work
+# Regression: shipping one commit PAST the range used to halve the payout, because
+# a BEAT paid the same as a NEAR. More work must never be worth less.
+LO, HI = 9, 40
+pts = [h.score_session(LO, HI, a)[1] for a in range(LO, 200)]
+assert pts == sorted(pts), "reward must rise with commits shipped"
+assert h.score_session(LO, HI, HI + 1)[1] > h.score_session(LO, HI, LO)[1], \
+    "beating the range must beat scraping its floor"
+assert h.score_session(LO, HI, LO)[0] == "HIT" and h.score_session(LO, HI, LO)[1] == h.REWARD_FLOOR
+assert h.score_session(LO, HI, HI)[1] == h.REWARD_CEIL
+assert h.score_session(LO, HI, LO - 1) == ("NEAR", h.REWARD_EDGE)
+assert h.score_session(LO, HI, 0) == ("CRASH", h.PENALTY_CRASH)
+# One huge day cannot rocket the ticker on its own.
+assert h.score_session(LO, HI, 10_000)[1] == h.REWARD_CEIL + h.OVERSHOOT_BONUS
+# A flat forecast is a point forecast and must still grade sensibly.
+# A flat forecast is a point forecast: an exact hit is the ceiling, not the floor.
+assert h.score_session(20, 20, 20) == ("HIT", h.REWARD_CEIL)
+assert h.score_session(20, 20, 19) == ("NEAR", h.REWARD_EDGE)
+assert h.score_session(0, 0, 0)[0] == "HIT"
+flat = [h.score_session(20, 20, a)[1] for a in range(1, 60)]
+assert flat == sorted(flat), flat
+# Under the floor everything falls away, in order.
+below = [h.score_session(LO, HI, a)[1] for a in (0, 1, 2, LO - 2, LO - 1, LO)]
+assert below == sorted(below), below
+# classify() must be the label from the same function, never a second opinion.
+for a in range(0, 200):
+    assert h.classify(LO, HI, a) == h.score_session(LO, HI, a)[0]
 
 # ------------------------------------------------------------------- the settle
 def run(pending, actual, **kw):
@@ -41,8 +67,9 @@ def run(pending, actual, **kw):
 
 p = {"for_date": "2026-10-02", "lo": 3, "hi": 60}
 e = run(p, 40)
-assert (e["result"], e["score"], (e["lo"], e["hi"])) == ("HIT", h.REWARD_EXACT, (3, 60)), e
-assert e["probability"] == 51.0
+assert (e["result"], (e["lo"], e["hi"])) == ("HIT", (3, 60)), e
+assert e["score"] == round(h.score_session(3, 60, 40)[1], 2), e
+assert e["probability"] == round(50.0 + e["score"], 2)
 
 # Vacation: voided, worth nothing, breaks nothing.
 assert run(p, 40, vacation=True)["score"] == 0.0
@@ -77,8 +104,10 @@ assert h.streak_from([]) == 0 and h.best_streak_from([]) == 0
 # Bonuses still escalate, and only for good sessions.
 st = {"probability": 50.0, "history": []}
 for i in range(2):
-    h.settle(st, {"for_date": f"2026-10-0{i+1}", "lo": 10, "hi": 30}, 20)
-assert [e["score"] for e in st["history"]] == [1.0, 1.1], st["history"]
+    h.settle(st, {"for_date": f"2026-10-0{i+1}", "lo": 10, "hi": 30}, 30)
+scored = [e["score"] for e in st["history"]]
+assert scored[1] > scored[0], "a streak must be worth more"
+assert scored[0] == h.REWARD_CEIL + 0.0, scored
 
 # ------------------------------------------------------- one rule, all consumers
 for r in ("HIT", "NEAR", "BEAT"):

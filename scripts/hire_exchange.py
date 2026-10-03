@@ -47,8 +47,14 @@ START_PROB = 0.42          # listing price (%)
 PROB_MIN, PROB_MAX = 0.05, 99.90
 
 TOLERANCE = 1              # within this many commits of the range edge still counts
-REWARD_EXACT = 1.0         # points gained on exact hit
-REWARD_NEAR = 0.5          # points gained on near hit or beat
+# The reward rises with output, not with accuracy. Landing on the bottom of the
+# forecast range is worth less than landing on its top, and beating the top is
+# worth more again - shipping more must never score less.
+REWARD_FLOOR = 0.5         # inside the range, at its bottom
+REWARD_CEIL = 1.0          # inside the range, at its top
+REWARD_EDGE = 0.25         # one commit short of the range floor
+OVERSHOOT_BONUS = 0.5      # extra for shipping past the top of the range...
+OVERSHOOT_CAP = 1.0        # ...scaled by how far past, up to this multiple
 PENALTY_MISS = -0.25
 PENALTY_CRASH = -0.5       # zero commits when at least one was predicted
 PENALTY_MANIP = -1.5       # suspicious spike
@@ -578,20 +584,35 @@ def predict(counts: dict[date, int], today: date) -> tuple[int, int, float]:
     return min(vals), max(vals), avg
 
 
-def classify(lo: int, hi: int, actual: int) -> str:
-    """Score the trade against the forecast range.
+def score_session(lo: int, hi: int, actual: int) -> tuple[str, float]:
+    """Label and points for one session.
 
-    Manipulation is decided by the burst check, not here. Overshooting the range
-    is not a miss: on a profile whose entire pitch is volume, shipping more than
-    anything done in the last week is the good outcome.
+    Output is the pitch, so the reward is monotonic in `actual` from the range
+    floor upward: the bottom of the range beats missing it, the top beats the
+    bottom, and shipping past the top beats everything. It is capped so one
+    136-commit day cannot rocket the ticker on its own.
     """
     if actual == 0 and lo > 0:
-        return "CRASH"
-    if lo <= actual <= hi:
-        return "HIT"
-    if actual < lo:
-        return "NEAR" if lo - actual <= TOLERANCE else "MISS"
-    return "NEAR" if actual - hi <= TOLERANCE else "BEAT"
+        return "CRASH", PENALTY_CRASH
+    below = lo - actual
+    if below > TOLERANCE:
+        return "MISS", PENALTY_MISS
+    if below > 0:
+        return "NEAR", REWARD_EDGE
+    if hi == lo:
+        # A flat forecast is a point forecast, so hitting it exactly is the
+        # ceiling - not the floor of a zero-width range.
+        return "HIT", REWARD_CEIL
+    pos = (actual - lo) / (hi - lo)          # 0 at the floor, 1 at the top, >1 above
+    pts = REWARD_FLOOR + (REWARD_CEIL - REWARD_FLOOR) * min(pos, 1.0)
+    if pos > 1:
+        return "BEAT", round(pts + OVERSHOOT_BONUS * min(pos - 1, OVERSHOOT_CAP), 2)
+    return "HIT", round(pts, 2)
+
+
+def classify(lo: int, hi: int, actual: int) -> str:
+    """Label only. Delegates so the label and the points can never disagree."""
+    return score_session(lo, hi, actual)[0]
 
 
 def streak_from(history: list[dict]) -> int:
@@ -628,12 +649,10 @@ def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False,
     streak = streak_from(state["history"])  # read before this session is appended
 
     if delta is None:
-        if result in GOOD_RESULTS:
-            bonus = STREAK_BONUS * min(streak, STREAK_BONUS_CAP)
-            base = {"HIT": REWARD_EXACT, "NEAR": REWARD_NEAR, "BEAT": REWARD_NEAR}[result]
-            delta = base + bonus
+        if result == "MANIP":
+            delta = PENALTY_MANIP
         else:
-            delta = {"MISS": PENALTY_MISS, "CRASH": PENALTY_CRASH, "MANIP": PENALTY_MANIP}[result]
+            delta = score_session(lo, hi, actual)[1] + STREAK_BONUS * min(streak, STREAK_BONUS_CAP)
 
     raw = before + delta
     after = round(min(PROB_MAX, max(PROB_MIN, raw)), 2)
@@ -958,9 +977,9 @@ def render_block(state: dict) -> str:
         "",
         f"- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the smallest and largest commit count from the last {PREDICT_WINDOW_DAYS} days. Anything inside is a hit \u2014 roughly 4 days in 5.",
         "- The next midnight it fetches my **real** commit count and settles the trade.",
-        f"- Inside the range: **+{REWARD_EXACT:g}** pts. Within {TOLERANCE} of the edge: **+{REWARD_NEAR:g}** pts. Streaks add a small bonus.",
-        f"- Miss: **{PENALTY_MISS:g}** pts. Zero commits after predicting some: **{PENALTY_CRASH:g}** pts.",
-        f"- Beat the range by more than {TOLERANCE} and the probability **rises**: **+{REWARD_NEAR:g}** pts. Shipping more than anything done all week is the whole pitch, so overachieving is never a miss.",
+        f"- The reward follows the work, not the accuracy: **{REWARD_FLOOR:g}** pts for landing anywhere on the bottom of the range, **{REWARD_CEIL:g}** for the top, and up to **{REWARD_CEIL + OVERSHOOT_BONUS:g}** for beating it. Streaks add a small bonus.",
+        f"- Coming in {TOLERANCE} under the range is **{REWARD_EDGE:g}** pts, further under is **{PENALTY_MISS:g}**, and zero commits on a day that expected work is **{PENALTY_CRASH:g}**.",
+        "- Shipping more is never punished. Beating the top of the range is the best possible day, and the score keeps climbing with the overshoot.",
         f"- Market manipulation means one thing only: {HOURLY_MANIP_MIN}+ commits within {HOURLY_WINDOW_MIN} minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **{PENALTY_MANIP:g}** pts.",
         "- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.",
         "- **Monthly:** on the 1st, an earnings report summarises the previous month.",

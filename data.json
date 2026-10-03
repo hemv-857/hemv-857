@@ -1,5 +1,5 @@
 {
-  "probability": 2.92,
+  "probability": 2.7,
   "streak": 3,
   "best_streak": 3,
   "opened": "2026-09-30",
@@ -11,7 +11,7 @@
     "avg7": 19.86
   },
   "last_result": "BEAT",
-  "last_delta": 0.5,
+  "last_delta": 1.22,
   "last_note": "Volume above forecast. Recruiters noticed, recruiters are confused.",
   "history": [
     {
@@ -22,11 +22,11 @@
       "actual": 12,
       "result": "HIT",
       "hourly_manip": false,
-      "score": 1.0,
-      "delta": 1.0,
+      "score": 0.53,
+      "delta": 0.53,
       "clamped": null,
       "prob_before": 0.42,
-      "probability": 1.42,
+      "probability": 0.95,
       "note": "Called it. Now if only the offer letter would call back."
     },
     {
@@ -37,11 +37,11 @@
       "actual": 9,
       "result": "HIT",
       "hourly_manip": false,
-      "score": 1.0,
-      "delta": 1.0,
+      "score": 0.53,
+      "delta": 0.53,
       "clamped": null,
-      "prob_before": 1.42,
-      "probability": 2.42,
+      "prob_before": 0.95,
+      "probability": 1.48,
       "note": "Called it. Now if only the offer letter would call back."
     },
     {
@@ -52,11 +52,11 @@
       "actual": 40,
       "result": "BEAT",
       "hourly_manip": false,
-      "score": 0.5,
-      "delta": 0.5,
+      "score": 1.22,
+      "delta": 1.22,
       "clamped": null,
-      "prob_before": 2.42,
-      "probability": 2.92,
+      "prob_before": 1.48,
+      "probability": 2.7,
       "note": "Volume above forecast. Recruiters noticed, recruiters are confused."
     }
   ],
