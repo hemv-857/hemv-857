@@ -19,7 +19,8 @@ Usage:
   python scripts/hire_exchange.py                 # real run (needs GH_TOKEN, GH_LOGIN)
   python scripts/hire_exchange.py --mock          # fake commit counts, no network
   python scripts/hire_exchange.py --render-only   # just re-render from data.json
-  python scripts/hire_exchange.py --today 2026-10-01 --mock   # simulate a date
+  python scripts/hire_exchange.py --today 2026-10-01 --mock   # simulate a date (writes nothing)
+  python scripts/hire_exchange.py --today 2026-10-01 --mock --write   # ...and overwrite the files
 """
 from __future__ import annotations
 
@@ -47,12 +48,17 @@ PROB_MIN, PROB_MAX = 0.05, 99.90
 
 TOLERANCE = 1              # |actual - predicted| <= this counts as a "near" hit
 REWARD_EXACT = 1.0         # points gained on exact hit
-REWARD_NEAR = 0.5          # points gained on near hit
+REWARD_NEAR = 0.5          # points gained on near hit or beat
 PENALTY_MISS = -0.25
 PENALTY_CRASH = -0.5       # zero commits when at least one was predicted
 PENALTY_MANIP = -1.5       # suspicious spike
-STREAK_BONUS = 0.1         # extra per consecutive hit (after the first)...
+STREAK_BONUS = 0.1         # extra per consecutive good session (after the first)...
 STREAK_BONUS_CAP = 5       # ...up to this many steps
+
+# The single definition of a "good" session. Every consumer must use this:
+# the hit rate, the streak, and the visitor-vote settlement all read it, so a
+# result can never be a hit in one place and a miss in another.
+GOOD_RESULTS = ("HIT", "NEAR", "BEAT")
 
 # Market manipulation: a burst of commits inside the profile repo. Overachieving a
 # low forecast is not fraud, so there is no ratio rule.
@@ -189,11 +195,11 @@ def stats(history: list[dict], best_streak: int) -> dict:
         return {"n": 0, "hit_rate": 0.0, "exact": 0, "near": 0, "beat": 0, "miss": 0, "best_streak": best_streak}
     exact = sum(e["result"] == "HIT" for e in history)
     near = sum(e["result"] == "NEAR" for e in history)
-    beat = sum(e["result"] == "BEAT" for e in history)
+    beat = sum(e["result"] == "BEAT" for e in history)  # all three are GOOD_RESULTS
     miss = sum(e["result"] in ("MISS", "CRASH", "MANIP") for e in history)
     return {
         "n": n,
-        "hit_rate": (exact + near + beat) / n,
+        "hit_rate": sum(e["result"] in GOOD_RESULTS for e in history) / n,
         "exact": exact,
         "near": near,
         "beat": beat,
@@ -247,7 +253,12 @@ def _request_json(req: request.Request, attempts: int = RETRY_ATTEMPTS) -> dict:
 
 
 def fetch_commit_counts(login: str, days: list[date], token: str) -> dict[date, int]:
-    """One GraphQL request, one aliased contributionsCollection per IST day."""
+    """One GraphQL request, one aliased contributionsCollection per IST day.
+
+    ponytail: totalCommitContributions is the contribution-graph number, not a
+    commit count - it excludes forks and repos without push access, and it lags.
+    Swap in the REST /repos/*/commits listing if that ever matters.
+    """
     fields = []
     for d in days:
         s, e = day_bounds_utc(d)
@@ -357,35 +368,52 @@ def _gh_api(method: str, path: str, token: str, body: dict | None = None):
         return None
 
 
+def _count_vote_reactions(repo: str, issue_no: int, token: str) -> tuple[int, int] | None:
+    """(hit, miss) reaction totals. None if the first page failed."""
+    hit = miss = 0
+    for page in range(1, 11):  # reactions are paginated; page 1 alone is not enough
+        chunk = _gh_api("GET", f"/repos/{repo}/issues/{issue_no}/reactions?per_page=100&page={page}", token)
+        if chunk is None:
+            return None if page == 1 else (hit, miss)
+        for r in chunk:
+            if r.get("content") == VOTE_REACT_HIT:
+                hit += 1
+            elif r.get("content") == VOTE_REACT_MISS:
+                miss += 1
+        if len(chunk) < 100:
+            break
+    return hit, miss
+
+
 def settle_visitor_votes(state: dict, actual: int, token: str) -> None:
     """Count 👍/👎 reactions on yesterday's voting issue and update visitor tallies."""
     issue_no = state.get("vote_issue")
     if not issue_no:
         return
 
-    reactions = _gh_api("GET", f"/repos/{state.get('_repo', '')}/issues/{issue_no}/reactions", token)
-    if reactions is None:
+    repo = state.get("_repo", "")
+    votes = _count_vote_reactions(repo, issue_no, token)
+    if votes is None:
         return
-    hit_votes = sum(1 for r in reactions if r.get("content") == VOTE_REACT_HIT)
-    miss_votes = sum(1 for r in reactions if r.get("content") == VOTE_REACT_MISS)
+    hit_votes, miss_votes = votes
     # Did the visitors win? (They vote HIT if they think the bot's prediction lands)
-    # We need the prediction for that issue — stored in state before settle
     pred = state.get("_last_vote_predicted")
+    # settle() already scored this session. Re-deriving it here would disagree on
+    # BEAT (good) and MANIP (decided by the burst check, not by classify).
+    result = state.get("last_result") or classify(pred, actual)
     visitors = state.setdefault("visitors", {"hit": 0, "miss": 0, "correct": 0})
     visitors["hit"] += hit_votes
     visitors["miss"] += miss_votes
     if pred is not None:
-        result = classify(pred, actual)
         visitor_said_hit = hit_votes > miss_votes
-        visitor_was_right = (result in ("HIT", "NEAR")) == visitor_said_hit
+        visitor_was_right = (result in GOOD_RESULTS) == visitor_said_hit
         if visitor_was_right:
             visitors["correct"] += hit_votes + miss_votes
     # Close the issue by commenting the result
     comment = (f"**Settled:** forecast was {pred}, actual was {actual} → "
-               f"{RESULT_LABEL.get(classify(pred, actual), 'n/a')}. "
+               f"{RESULT_LABEL.get(result, 'n/a')}. "
                f"Visitors: {hit_votes} 👍 / {miss_votes} 👎.")
-    _gh_api("POST", f"/repos/{state.get('_repo', '')}/issues/{issue_no}/comments", token,
-            {"body": comment})
+    _gh_api("POST", f"/repos/{repo}/issues/{issue_no}/comments", token, {"body": comment})
     state["vote_issue"] = None
 
 
@@ -464,22 +492,40 @@ def classify(predicted: int, actual: int) -> str:
     return "MISS"
 
 
+def streak_from(history: list[dict]) -> int:
+    """Consecutive good sessions ending at the most recent one."""
+    n = 0
+    for e in reversed(history):
+        if e["result"] in GOOD_RESULTS:
+            n += 1
+        else:
+            break
+    return n
+
+
+def best_streak_from(history: list[dict]) -> int:
+    """Longest run of consecutive good sessions ever recorded."""
+    best = run = 0
+    for e in history:
+        run = run + 1 if e["result"] in GOOD_RESULTS else 0
+        best = max(best, run)
+    return best
+
+
 def settle(state: dict, pending: dict, actual: int, hourly_manip: bool = False) -> None:
     predicted = pending["predicted"]
     result = "MANIP" if hourly_manip else classify(predicted, actual)
     before = state["probability"]
+    streak = streak_from(state["history"])  # read before this session is appended
 
-    if result in ("HIT", "NEAR", "BEAT"):
-        state["streak"] += 1
-        bonus = STREAK_BONUS * min(state["streak"] - 1, STREAK_BONUS_CAP)
+    if result in GOOD_RESULTS:
+        bonus = STREAK_BONUS * min(streak, STREAK_BONUS_CAP)
         base = {"HIT": REWARD_EXACT, "NEAR": REWARD_NEAR, "BEAT": REWARD_NEAR}[result]
         delta = base + bonus
     else:
-        state["streak"] = 0
         delta = {"MISS": PENALTY_MISS, "CRASH": PENALTY_CRASH, "MANIP": PENALTY_MANIP}[result]
 
     after = round(min(PROB_MAX, max(PROB_MIN, before + delta)), 2)
-    state["best_streak"] = max(state["best_streak"], state["streak"])
 
     pool_key = result
     if result == "MISS":
@@ -621,7 +667,7 @@ def render_svg(state: dict) -> str:
              f'role="img" aria-labelledby="t d" font-family="{FONT}">')
     o.append(f'<title id="t">Hire probability: {p:.2f}%</title>')
     o.append(f'<desc id="d">Live "hire probability" exchange. Analyst rating {label}. '
-             f'Current streak {state["streak"]} correct predictions. Not financial advice.</desc>')
+             f'Current streak {state["streak"]} good sessions. Not financial advice.</desc>')
     o.append(f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="14" fill="{BG}" stroke="{BORDER}"/>')
 
     # Header
@@ -776,14 +822,31 @@ def main() -> None:
     ap.add_argument("--render-only", action="store_true", help="only re-render files from data.json")
     ap.add_argument("--today", help="override today's IST date, YYYY-MM-DD (for testing)")
     ap.add_argument("--login", default=os.environ.get("GH_LOGIN"), help="GitHub username")
+    ap.add_argument("--write", action="store_true",
+                    help="let --mock overwrite data.json / README.md / ticker.svg")
     args = ap.parse_args()
 
     today = date.fromisoformat(args.today) if args.today else datetime.now(IST).date()
     state = load_state()
+    # --mock runs on dice rolls. Writing them into the tracked files would
+    # corrupt the real ticker, so that needs an explicit opt-in.
+    may_write = not args.mock or args.write
+    if not may_write:
+        print("  mock run: not writing data.json / README.md / ticker.svg (pass --write to override)")
 
     if not args.render_only:
         pending = state.get("pending")
         needs_settle = bool(pending) and pending["for_date"] < today.isoformat()
+
+        if needs_settle:
+            # Days that ended with no prediction cannot be scored - there is no
+            # forecast to settle them against, and inventing one would be a lie.
+            # Surface the gap instead of letting history look complete.
+            gap = (today - date.fromisoformat(pending["for_date"])).days - 1
+            if gap > 0:
+                print(f"  WARNING: {gap} day(s) were never predicted and are absent from "
+                      f"history: {pending['for_date']} -> {(today - timedelta(days=1))}",
+                      file=sys.stderr)
 
         wanted = {today - timedelta(days=i) for i in range(1, 8)}
         if needs_settle:
@@ -833,6 +896,11 @@ def main() -> None:
             predicted, avg = predict(counts, today)
             state["pending"] = {"for_date": today.isoformat(), "predicted": predicted, "avg7": avg}
 
+        # Derived, never stored-and-incremented: a re-settled or hand-edited
+        # history can no longer leave these lying about the record.
+        state["streak"] = streak_from(state["history"])
+        state["best_streak"] = best_streak_from(state["history"])
+
         # Monthly wrap-up (NEW)
         wrap = monthly_wrap(state, today)
         if wrap:
@@ -852,11 +920,13 @@ def main() -> None:
 
         state["opened"] = state["opened"] or today.isoformat()
         state["updated"] = today.isoformat()
-        save_state(state)
+        if may_write:
+            save_state(state)
 
-    SVG_FILE.parent.mkdir(parents=True, exist_ok=True)
-    SVG_FILE.write_text(render_svg(state), encoding="utf-8")
-    update_readme(render_block(state))
+    if may_write:
+        SVG_FILE.parent.mkdir(parents=True, exist_ok=True)
+        SVG_FILE.write_text(render_svg(state), encoding="utf-8")
+        update_readme(render_block(state))
 
     p = state["probability"]
     print(f"[{state.get('updated')}] hire probability {p:.2f}% | streak {state['streak']} | pending {state.get('pending')}")

@@ -12,13 +12,13 @@
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=729ab9a3" alt="Hire probability 0.55% (analyst rating: STRONG SELL). Streak: 0." width="820">
+<img src="assets/ticker.svg?v=a171e2dc" alt="Hire probability 0.55% (analyst rating: STRONG SELL). Streak: 1." width="820">
 
 </div>
 
 <br>
 
-*3 sessions · 33% hit rate · best streak 0 · 0 exact / 0 near / 1 beat / 2 miss*
+*3 sessions · 33% hit rate · best streak 1 · 0 exact / 0 near / 1 beat / 2 miss*
 
 > 📊 2026-09 earnings report: 1 sessions, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
