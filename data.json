@@ -1,18 +1,18 @@
 {
-  "probability": 4.56,
-  "streak": 5,
-  "best_streak": 5,
+  "probability": 5.41,
+  "streak": 6,
+  "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-05",
+  "updated": "2026-10-06",
   "pending": {
-    "for_date": "2026-10-05",
-    "lo": 11,
+    "for_date": "2026-10-06",
+    "lo": 15,
     "hi": 43,
-    "avg7": 30.86
+    "avg7": 31.43
   },
   "last_result": "HIT",
-  "last_delta": 1.05,
-  "last_note": "Perfect prediction. Sadly, the recruiter inbox is not as predictable.",
+  "last_delta": 0.85,
+  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
   "history": [
     {
       "date": "2026-09-30",
@@ -88,6 +88,21 @@
       "prob_before": 3.51,
       "probability": 4.56,
       "note": "Perfect prediction. Sadly, the recruiter inbox is not as predictable."
+    },
+    {
+      "date": "2026-10-05",
+      "lo": 11,
+      "hi": 43,
+      "predicted": 27,
+      "actual": 15,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 0.85,
+      "delta": 0.85,
+      "clamped": null,
+      "prob_before": 4.56,
+      "probability": 5.41,
+      "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
     }
   ],
   "visitors": {
@@ -95,7 +110,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 7,
+  "vote_issue": 8,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
