@@ -1,18 +1,18 @@
 {
-  "probability": 5.66,
+  "probability": 5.41,
   "streak": 0,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-07",
+  "updated": "2026-10-08",
   "pending": {
-    "for_date": "2026-10-07",
-    "lo": 11,
-    "hi": 43,
-    "avg7": 27.0
+    "for_date": "2026-10-08",
+    "lo": 4,
+    "hi": 38,
+    "avg7": 20.29
   },
   "last_result": "MISS",
-  "last_delta": 0.25,
-  "last_note": "Underdelivered. The market has feelings and they are hurt.",
+  "last_delta": -0.25,
+  "last_note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde.",
   "history": [
     {
       "date": "2026-09-30",
@@ -118,6 +118,21 @@
       "prob_before": 5.41,
       "probability": 5.66,
       "note": "Underdelivered. The market has feelings and they are hurt."
+    },
+    {
+      "date": "2026-10-07",
+      "lo": 11,
+      "hi": 43,
+      "predicted": 27,
+      "actual": 3,
+      "result": "MISS",
+      "hourly_manip": false,
+      "score": -0.25,
+      "delta": -0.25,
+      "clamped": null,
+      "prob_before": 5.66,
+      "probability": 5.41,
+      "note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde."
     }
   ],
   "visitors": {
@@ -125,7 +140,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 9,
+  "vote_issue": 10,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
