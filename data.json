@@ -1,18 +1,18 @@
 {
-  "probability": 5.41,
-  "streak": 0,
+  "probability": 5.59,
+  "streak": 1,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-08",
+  "updated": "2026-10-09",
   "pending": {
-    "for_date": "2026-10-08",
-    "lo": 4,
+    "for_date": "2026-10-09",
+    "lo": 7,
     "hi": 38,
-    "avg7": 20.29
+    "avg7": 20.71
   },
-  "last_result": "MISS",
-  "last_delta": -0.25,
-  "last_note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde.",
+  "last_result": "HIT",
+  "last_delta": 0.18,
+  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
   "history": [
     {
       "date": "2026-09-30",
@@ -133,6 +133,21 @@
       "prob_before": 5.66,
       "probability": 5.41,
       "note": "Fewer commits than forecast. Blame chai, Wi-Fi and Mercury retrograde."
+    },
+    {
+      "date": "2026-10-08",
+      "lo": 4,
+      "hi": 38,
+      "predicted": 21,
+      "actual": 7,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 0.18,
+      "delta": 0.18,
+      "clamped": null,
+      "prob_before": 5.41,
+      "probability": 5.59,
+      "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
     }
   ],
   "visitors": {
@@ -140,7 +155,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 10,
+  "vote_issue": 11,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
