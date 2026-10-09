@@ -59,9 +59,11 @@
 <p align="center"><b>Languages</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&amp;logo=typescript&amp;logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&amp;logo=c%2B%2B&amp;logoColor=white" alt="C++">
   <img src="https://img.shields.io/badge/Rust-DEA584?style=flat-square&amp;logo=rust&amp;logoColor=black" alt="Rust">
+  <img src="https://img.shields.io/badge/Shell-4EAA25?style=flat-square&amp;logo=gnubash&amp;logoColor=white" alt="Shell">
 </p>
 
 <p align="center"><b>Frameworks &amp; Tools</b></p>
