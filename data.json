@@ -1,18 +1,18 @@
 {
-  "probability": 5.59,
-  "streak": 1,
+  "probability": 5.44,
+  "streak": 0,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-09",
+  "updated": "2026-10-10",
   "pending": {
-    "for_date": "2026-10-09",
-    "lo": 7,
-    "hi": 38,
-    "avg7": 20.71
+    "for_date": "2026-10-10",
+    "lo": 4,
+    "hi": 28,
+    "avg7": 15.14
   },
-  "last_result": "HIT",
-  "last_delta": 0.18,
-  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
+  "last_result": "MISS",
+  "last_delta": -0.15,
+  "last_note": "Forecast missed. Portfolio blames the power cut.",
   "history": [
     {
       "date": "2026-09-30",
@@ -148,6 +148,21 @@
       "prob_before": 5.41,
       "probability": 5.59,
       "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
+    },
+    {
+      "date": "2026-10-09",
+      "lo": 7,
+      "hi": 38,
+      "predicted": 22,
+      "actual": 4,
+      "result": "MISS",
+      "hourly_manip": false,
+      "score": -0.15,
+      "delta": -0.15,
+      "clamped": null,
+      "prob_before": 5.59,
+      "probability": 5.44,
+      "note": "Forecast missed. Portfolio blames the power cut."
     }
   ],
   "visitors": {
@@ -155,7 +170,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 11,
+  "vote_issue": 12,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
