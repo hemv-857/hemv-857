@@ -1,18 +1,18 @@
 {
-  "probability": 5.44,
-  "streak": 0,
+  "probability": 5.58,
+  "streak": 1,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-10",
+  "updated": "2026-10-11",
   "pending": {
-    "for_date": "2026-10-10",
+    "for_date": "2026-10-11",
     "lo": 4,
-    "hi": 28,
-    "avg7": 15.14
+    "hi": 15,
+    "avg7": 10.29
   },
-  "last_result": "MISS",
-  "last_delta": -0.15,
-  "last_note": "Forecast missed. Portfolio blames the power cut.",
+  "last_result": "HIT",
+  "last_delta": 0.14,
+  "last_note": "Exact call. Analysts are stunned. HR is still on leave.",
   "history": [
     {
       "date": "2026-09-30",
@@ -163,6 +163,21 @@
       "prob_before": 5.59,
       "probability": 5.44,
       "note": "Forecast missed. Portfolio blames the power cut."
+    },
+    {
+      "date": "2026-10-10",
+      "lo": 4,
+      "hi": 28,
+      "predicted": 16,
+      "actual": 4,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 0.14,
+      "delta": 0.14,
+      "clamped": null,
+      "prob_before": 5.44,
+      "probability": 5.58,
+      "note": "Exact call. Analysts are stunned. HR is still on leave."
     }
   ],
   "visitors": {
@@ -170,7 +185,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 12,
+  "vote_issue": 13,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
