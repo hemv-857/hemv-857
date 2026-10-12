@@ -7,6 +7,32 @@
 
 <p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
 
+## 🏆 Featured work
+
+Most of my repos are experiments. These are the ones I'd defend in a review.
+
+| Project | What it is | Why it's here |
+|---|---|---|
+| **[limit-order-book](https://github.com/hemv-857/limit-order-book)** | Deterministic limit order book & matching engine in C++20 | No locks on the hot path; determinism is tested, not hoped for |
+| **[svi-scanner](https://github.com/hemv-857/svi-scanner)** | SVI volatility-surface fitter that scans Deribit options for arbitrage | Fits a surface, then looks for where it disagrees with the market |
+| **[cognitive-convergence-detector](https://github.com/hemv-857/cognitive-convergence-detector)** | Detects when institutional signals converge — crowded positioning / systemic risk | Correlation as an early-warning signal, not dashboard decoration |
+| **[mcp-vetter-agent](https://github.com/hemv-857/mcp-vetter-agent)** | AI agent that audits MCP servers before you connect to them | Because I hand agents real tools, so I check what's on the other end |
+| **[edge-mem](https://github.com/hemv-857/edge-mem)** | Offline-first edge knowledge engine, Qdrant-backed cloud federation | Works with the network off, and still finds things |
+| **[Codeinsight](https://github.com/hemv-857/Codeinsight)** | Ask questions about any repo in plain English; see the architecture it infers | RAG + knowledge graph over code, with the graph drawn out |
+
+Everything else — quant engines, viz tools, MCP fixtures — is in the
+[repository list](https://github.com/hemv-857?tab=repositories).
+
+## 🌱 Upstream contributions
+
+Greenfield repos are the easy part. Pushing on someone else's repo is the part I'm proudest of:
+
+- **[jaegertracing/jaeger#9820](https://github.com/jaegertracing/jaeger/pull/9820)** — separate ACP prompt blocks with a delimiter in the AI sidecar
+- **[topoteretes/cognee-community#202](https://github.com/topoteretes/cognee-community/pull/202)** — Raindrop.io data-source connector
+- **[jankrepl/deepdow#152](https://github.com/jankrepl/deepdow/pull/152)** — `__sub__` / `__rsub__` on the `Loss` class
+
+<p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
+
 <h2 align="center">📈 Live: my chances of getting hired</h2>
 
 <!--HIRE_EXCHANGE:START-->
@@ -55,6 +81,7 @@
 </details>
 <!--HIRE_EXCHANGE:END-->
 
+
 <p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
 
 <h2 align="center">🛠 Stack</h2>
@@ -102,4 +129,14 @@
 
 <p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
 
-<h2 align="center">📫 Reach me</h2>
+
+## 📫 Reach me
+
+Open to full-time roles — quant, platform, or AI-infrastructure engineering.
+
+- GitHub: [@hemv-857](https://github.com/hemv-857) (you're here)
+- Email / LinkedIn: add them to the profile sidebar
+
+Prefer a concrete conversation to a cover letter. Point me at a
+matching-engine latency bug or a CI pipeline that takes 40 minutes and
+I'll have opinions before the call ends.
