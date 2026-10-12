@@ -144,3 +144,7 @@ I'll have opinions before the call ends.
 ## License
 
 [LICENSE](https://github.com/hemv-857/hemv-857/blob/main/LICENSE) — see the file for the full text.
+
+## License
+
+[MIT](https://github.com/hemv-857/hemv-857/blob/main/LICENSE) — applies to the profile README and anything in this repo.
