@@ -140,3 +140,7 @@ Open to full-time roles — quant, platform, or AI-infrastructure engineering.
 Prefer a concrete conversation to a cover letter. Point me at a
 matching-engine latency bug or a CI pipeline that takes 40 minutes and
 I'll have opinions before the call ends.
+
+## License
+
+[LICENSE](https://github.com/hemv-857/hemv-857/blob/main/LICENSE) — see the file for the full text.
