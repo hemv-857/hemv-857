@@ -1,18 +1,18 @@
 {
-  "probability": 6.21,
-  "streak": 2,
+  "probability": 7.91,
+  "streak": 3,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-12",
+  "updated": "2026-10-13",
   "pending": {
-    "for_date": "2026-10-12",
+    "for_date": "2026-10-13",
     "lo": 4,
     "hi": 11,
-    "avg7": 7.43
+    "avg7": 30.29
   },
-  "last_result": "HIT",
-  "last_delta": 0.63,
-  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
+  "last_result": "BEAT",
+  "last_delta": 1.7,
+  "last_note": "Beat the forecast by a mile. The model is now upgrading its assumptions.",
   "history": [
     {
       "date": "2026-09-30",
@@ -193,6 +193,21 @@
       "prob_before": 5.58,
       "probability": 6.21,
       "note": "Bullseye. Sharma ji ka beta is mildly concerned."
+    },
+    {
+      "date": "2026-10-12",
+      "lo": 4,
+      "hi": 11,
+      "predicted": 8,
+      "actual": 175,
+      "result": "BEAT",
+      "hourly_manip": false,
+      "score": 1.7,
+      "delta": 1.7,
+      "clamped": null,
+      "prob_before": 6.21,
+      "probability": 7.91,
+      "note": "Beat the forecast by a mile. The model is now upgrading its assumptions."
     }
   ],
   "visitors": {
@@ -200,7 +215,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 14,
+  "vote_issue": 17,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
