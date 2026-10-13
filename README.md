@@ -20,8 +20,61 @@ Most of my repos are experiments. These are the ones I'd defend in a review.
 | **[edge-mem](https://github.com/hemv-857/edge-mem)** | Offline-first edge knowledge engine, Qdrant-backed cloud federation | Works with the network off, and still finds things |
 | **[Codeinsight](https://github.com/hemv-857/Codeinsight)** | Ask questions about any repo in plain English; see the architecture it infers | RAG + knowledge graph over code, with the graph drawn out |
 
-Everything else — quant engines, viz tools, MCP fixtures — is in the
-[repository list](https://github.com/hemv-857?tab=repositories).
+<details>
+<summary><b>The rest of the portfolio — 26 repos, grouped by what they're actually for</b></summary>
+
+**Quant &amp; market microstructure**
+
+| Repo | What it does |
+|---|---|
+| [lob-engine](https://github.com/hemv-857/lob-engine) | Price-time priority LOB in Rust, std-only — plus TWAP/VWAP/POV execution algorithms |
+| [hawkes-lob](https://github.com/hemv-857/hawkes-lob) | Hawkes process model — tests whether BTC trades self-excite like order books do |
+| [rmt-covariance](https://github.com/hemv-857/rmt-covariance) | Covariance cleaning via Random Matrix Theory vs Ledoit-Wolf, with walk-forward backtests |
+| [rbergomi-engine](https://github.com/hemv-857/rbergomi-engine) | Rough-volatility pricing — Monte Carlo with control variates, calibrated to live SPX options |
+| [151-trading-strats](https://github.com/hemv-857/151-trading-strats) | 151 strategies across 18 asset classes; based on Kakushadze &amp; Serur (2018) |
+| [market-pipeline](https://github.com/hemv-857/market-pipeline) | Binance WebSocket → Redis → FastAPI, 35 ms end to end |
+
+**AI tooling &amp; agents**
+
+| Repo | What it does |
+|---|---|
+| [intellex](https://github.com/hemv-857/intellex) | Natural-language requests → clean, source-backed datasets |
+| [vizql](https://github.com/hemv-857/vizql) | Visual SQL explainer — watch a query execute step by step |
+| [vizarch](https://github.com/hemv-857/vizarch) | System architecture diagrams from plain English, as SVG |
+| [commit-archaeology](https://github.com/hemv-857/commit-archaeology) | Commit history → feature eras, who broke what, and the bus factor |
+| [dependency-time-machine](https://github.com/hemv-857/dependency-time-machine) | Any repo + any past date → that project's snapshot, plus what shipped since |
+| [impact-lens](https://github.com/hemv-857/impact-lens) | Impact &amp; sustainability media analysis, before/after comparison |
+| [J.A.R.V.I.S](https://github.com/hemv-857/J.A.R.V.I.S) | Finds issues matching your skills, plans the contribution, drafts the PR |
+
+**F1 — a three-part series**
+
+| Repo | What it does |
+|---|---|
+| [predictive-tire-engine](https://github.com/hemv-857/predictive-tire-engine) | Tire degradation predictor, D3 dashboard, live telemetry |
+| [f1-performance-intelligence](https://github.com/hemv-857/f1-performance-intelligence) | Telemetry dashboard with an AI race engineer |
+| [apex-racing-live-strategy](https://github.com/hemv-857/apex-racing-live-strategy) | Race strategy simulator — tire/fuel modelling, pit optimisation |
+
+**Fintech**
+
+| Repo | What it does |
+|---|---|
+| [ptm-recovery-agent](https://github.com/hemv-857/ptm-recovery-agent) | Recovers failed Paytm payments, measuring true incremental lift |
+| [rzp-recovery-agent](https://github.com/hemv-857/rzp-recovery-agent) | Same for Razorpay — causal, not just "recovered count" |
+
+**Platforms, native &amp; utilities**
+
+| Repo | What it does |
+|---|---|
+| [ORION](https://github.com/hemv-857/ORION) | Geopolitical risk dashboard — energy supply chains and conflicts, real time |
+| [textdistance-rs](https://github.com/hemv-857/textdistance-rs) | Rust port of textdistance — 43 algorithms, 77–1788× faster than Python |
+| [agent-office-app](https://github.com/hemv-857/agent-office-app) | macOS SwiftUI app running multiple AI agents — streaming, cost, task queues |
+| [PRESENT](https://github.com/hemv-857/PRESENT) | macOS menubar attendance tracker — safe-skip maths and lecture reminders |
+| [FinCortex_Finvigators](https://github.com/hemv-857/FinCortex_Finvigators) | AI CFO assistant — spend, cashflow forecasting, planning |
+| [Projects](https://github.com/hemv-857/Projects) | Experiments in probability calibration, decision theory, betting |
+| [internship-tracker](https://github.com/hemv-857/internship-tracker) | Scrapes 270+ companies, daily digests via Telegram |
+
+</details>
+
 
 ## 🌱 Upstream contributions
 
