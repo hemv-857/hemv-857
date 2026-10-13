@@ -1,18 +1,18 @@
 {
-  "probability": 7.91,
-  "streak": 3,
+  "probability": 9.71,
+  "streak": 4,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-13",
+  "updated": "2026-10-14",
   "pending": {
-    "for_date": "2026-10-13",
+    "for_date": "2026-10-14",
     "lo": 4,
-    "hi": 11,
-    "avg7": 30.29
+    "hi": 62,
+    "avg7": 37.57
   },
   "last_result": "BEAT",
-  "last_delta": 1.7,
-  "last_note": "Beat the forecast by a mile. The model is now upgrading its assumptions.",
+  "last_delta": 1.8,
+  "last_note": "Overdelivered. The forecast was simply wrong, and happily so.",
   "history": [
     {
       "date": "2026-09-30",
@@ -208,6 +208,21 @@
       "prob_before": 6.21,
       "probability": 7.91,
       "note": "Beat the forecast by a mile. The model is now upgrading its assumptions."
+    },
+    {
+      "date": "2026-10-13",
+      "lo": 4,
+      "hi": 11,
+      "predicted": 8,
+      "actual": 62,
+      "result": "BEAT",
+      "hourly_manip": false,
+      "score": 1.8,
+      "delta": 1.8,
+      "clamped": null,
+      "prob_before": 7.91,
+      "probability": 9.71,
+      "note": "Overdelivered. The forecast was simply wrong, and happily so."
     }
   ],
   "visitors": {
@@ -215,7 +230,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 17,
+  "vote_issue": 19,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null

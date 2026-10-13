@@ -91,19 +91,20 @@ Greenfield repos are the easy part. Pushing on someone else's repo is the part I
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=fbd3402f" alt="Hire probability 7.91% (analyst rating: HOLD). 390 commits in 13 sessions · 30/day · never missed a day. Streak: 3." width="640">
+<img src="assets/ticker.svg?v=08f1fb6c" alt="Hire probability 9.71% (analyst rating: HOLD). 452 commits in 14 sessions · 32/day · never missed a day. Streak: 4." width="640">
 
 </div>
 
 <br>
 
-*13 sessions · 77% hit rate · best streak 6 · 6 exact / 1 near / 3 beat / 3 miss*
+*14 sessions · 79% hit rate · best streak 6 · 6 exact / 1 near / 4 beat / 3 miss*
 
 > 📊 2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
 | Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-10-13** (today) | 4–11 | ⏳ | Market open | | |
+| **2026-10-14** (today) | 4–62 | ⏳ | Market open | | |
+| 2026-10-13 | 4–11 | 62 | 🚀 Beat | +1.80 | 9.71% |
 | 2026-10-12 | 4–11 | 175 | 🚀 Beat | +1.70 | 7.91% |
 | 2026-10-11 | 4–15 | 8 | ✅ Exact hit | +0.63 | 6.21% |
 | 2026-10-10 | 4–28 | 4 | ✅ Exact hit | +0.14 | 5.58% |
