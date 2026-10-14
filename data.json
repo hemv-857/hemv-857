@@ -1,18 +1,18 @@
 {
-  "probability": 9.71,
-  "streak": 4,
+  "probability": 10.16,
+  "streak": 5,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-14",
+  "updated": "2026-10-15",
   "pending": {
-    "for_date": "2026-10-14",
+    "for_date": "2026-10-15",
     "lo": 4,
     "hi": 62,
     "avg7": 37.57
   },
-  "last_result": "BEAT",
-  "last_delta": 1.8,
-  "last_note": "Overdelivered. The forecast was simply wrong, and happily so.",
+  "last_result": "NEAR",
+  "last_delta": 0.45,
+  "last_note": "Within margin. Probability up, LinkedIn still silent.",
   "history": [
     {
       "date": "2026-09-30",
@@ -223,6 +223,21 @@
       "prob_before": 7.91,
       "probability": 9.71,
       "note": "Overdelivered. The forecast was simply wrong, and happily so."
+    },
+    {
+      "date": "2026-10-14",
+      "lo": 4,
+      "hi": 62,
+      "predicted": 33,
+      "actual": 3,
+      "result": "NEAR",
+      "hourly_manip": false,
+      "score": 0.45,
+      "delta": 0.45,
+      "clamped": null,
+      "prob_before": 9.71,
+      "probability": 10.16,
+      "note": "Within margin. Probability up, LinkedIn still silent."
     }
   ],
   "visitors": {
@@ -230,7 +245,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 19,
+  "vote_issue": 20,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
