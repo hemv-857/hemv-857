@@ -1,18 +1,18 @@
 {
-  "probability": 10.16,
-  "streak": 5,
+  "probability": 10.71,
+  "streak": 6,
   "best_streak": 6,
   "opened": "2026-09-30",
-  "updated": "2026-10-15",
+  "updated": "2026-10-16",
   "pending": {
-    "for_date": "2026-10-15",
-    "lo": 4,
+    "for_date": "2026-10-16",
+    "lo": 3,
     "hi": 62,
-    "avg7": 37.57
+    "avg7": 37.0
   },
   "last_result": "NEAR",
-  "last_delta": 0.45,
-  "last_note": "Within margin. Probability up, LinkedIn still silent.",
+  "last_delta": 0.55,
+  "last_note": "Almost exact. Almost hired. Almost is the theme.",
   "history": [
     {
       "date": "2026-09-30",
@@ -238,6 +238,21 @@
       "prob_before": 9.71,
       "probability": 10.16,
       "note": "Within margin. Probability up, LinkedIn still silent."
+    },
+    {
+      "date": "2026-10-15",
+      "lo": 4,
+      "hi": 62,
+      "predicted": 33,
+      "actual": 3,
+      "result": "NEAR",
+      "hourly_manip": false,
+      "score": 0.55,
+      "delta": 0.55,
+      "clamped": null,
+      "prob_before": 10.16,
+      "probability": 10.71,
+      "note": "Almost exact. Almost hired. Almost is the theme."
     }
   ],
   "visitors": {
@@ -245,7 +260,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 20,
+  "vote_issue": 21,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
