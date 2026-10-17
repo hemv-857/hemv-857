@@ -1,18 +1,18 @@
 {
-  "probability": 11.27,
-  "streak": 7,
-  "best_streak": 7,
+  "probability": 11.8,
+  "streak": 8,
+  "best_streak": 8,
   "opened": "2026-09-30",
-  "updated": "2026-10-17",
+  "updated": "2026-10-18",
   "pending": {
-    "for_date": "2026-10-17",
+    "for_date": "2026-10-18",
     "lo": 3,
     "hi": 62,
-    "avg7": 37.0
+    "avg7": 36.71
   },
-  "last_result": "HIT",
-  "last_delta": 0.56,
-  "last_note": "Called it. Now if only the offer letter would call back.",
+  "last_result": "NEAR",
+  "last_delta": 0.53,
+  "last_note": "Almost exact. Almost hired. Almost is the theme.",
   "history": [
     {
       "date": "2026-09-30",
@@ -268,6 +268,21 @@
       "prob_before": 10.71,
       "probability": 11.27,
       "note": "Called it. Now if only the offer letter would call back."
+    },
+    {
+      "date": "2026-10-17",
+      "lo": 3,
+      "hi": 62,
+      "predicted": 32,
+      "actual": 2,
+      "result": "NEAR",
+      "hourly_manip": false,
+      "score": 0.53,
+      "delta": 0.53,
+      "clamped": null,
+      "prob_before": 11.27,
+      "probability": 11.8,
+      "note": "Almost exact. Almost hired. Almost is the theme."
     }
   ],
   "visitors": {
@@ -275,7 +290,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 22,
+  "vote_issue": 23,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
