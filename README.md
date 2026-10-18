@@ -91,19 +91,20 @@ Greenfield repos are the easy part. Pushing on someone else's repo is the part I
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=e154c4eb" alt="Hire probability 11.80% (analyst rating: HOLD). 464 commits in 18 sessions · 26/day · never missed a day. Streak: 8." width="640">
+<img src="assets/ticker.svg?v=39e7fd16" alt="Hire probability 12.45% (analyst rating: HOLD). 473 commits in 19 sessions · 25/day · never missed a day. Streak: 9." width="640">
 
 </div>
 
 <br>
 
-*18 sessions · 83% hit rate · best streak 8 · 7 exact / 4 near / 4 beat / 3 miss*
+*19 sessions · 84% hit rate · best streak 9 · 8 exact / 4 near / 4 beat / 3 miss*
 
 > 📊 2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.
 
 | Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-10-18** (today) | 3–62 | ⏳ | Market open | | |
+| **2026-10-19** (today) | 3–65 | ⏳ | Market open | | |
+| 2026-10-18 | 3–62 | 9 | ✅ Exact hit | +0.65 | 12.45% |
 | 2026-10-17 | 3–62 | 2 | 🟢 Near hit | +0.53 | 11.80% |
 | 2026-10-16 | 3–62 | 4 | ✅ Exact hit | +0.56 | 11.27% |
 | 2026-10-15 | 4–62 | 3 | 🟢 Near hit | +0.55 | 10.71% |
@@ -117,7 +118,6 @@ Greenfield repos are the easy part. Pushing on someone else's repo is the part I
 | 2026-10-07 | 11–43 | 3 | ❌ Miss | -0.25 | 5.41% |
 | 2026-10-06 | 15–43 | 11 | ❌ Miss | +0.25 | 5.66% |
 | 2026-10-05 | 11–43 | 15 | ✅ Exact hit | +0.85 | 5.41% |
-| 2026-10-04 | 11–43 | 28 | ✅ Exact hit | +1.05 | 4.56% |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>

@@ -1,18 +1,18 @@
 {
-  "probability": 11.8,
-  "streak": 8,
-  "best_streak": 8,
+  "probability": 12.45,
+  "streak": 9,
+  "best_streak": 9,
   "opened": "2026-09-30",
-  "updated": "2026-10-18",
+  "updated": "2026-10-19",
   "pending": {
-    "for_date": "2026-10-18",
+    "for_date": "2026-10-19",
     "lo": 3,
-    "hi": 62,
-    "avg7": 36.71
+    "hi": 65,
+    "avg7": 38.0
   },
-  "last_result": "NEAR",
-  "last_delta": 0.53,
-  "last_note": "Almost exact. Almost hired. Almost is the theme.",
+  "last_result": "HIT",
+  "last_delta": 0.65,
+  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
   "history": [
     {
       "date": "2026-09-30",
@@ -283,6 +283,21 @@
       "prob_before": 11.27,
       "probability": 11.8,
       "note": "Almost exact. Almost hired. Almost is the theme."
+    },
+    {
+      "date": "2026-10-18",
+      "lo": 3,
+      "hi": 62,
+      "predicted": 32,
+      "actual": 9,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 0.65,
+      "delta": 0.65,
+      "clamped": null,
+      "prob_before": 11.8,
+      "probability": 12.45,
+      "note": "Bullseye. Sharma ji ka beta is mildly concerned."
     }
   ],
   "visitors": {
@@ -290,7 +305,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 23,
+  "vote_issue": 24,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
