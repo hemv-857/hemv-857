@@ -1,18 +1,18 @@
 {
-  "probability": 15.58,
-  "streak": 12,
-  "best_streak": 12,
+  "probability": 16.7,
+  "streak": 13,
+  "best_streak": 13,
   "opened": "2026-09-30",
-  "updated": "2026-10-22",
+  "updated": "2026-10-23",
   "pending": {
-    "for_date": "2026-10-22",
-    "lo": 3,
+    "for_date": "2026-10-23",
+    "lo": 4,
     "hi": 8,
-    "avg7": 5.57
+    "avg7": 5.86
   },
   "last_result": "HIT",
   "last_delta": 1.12,
-  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
+  "last_note": "Called it. Now if only the offer letter would call back.",
   "history": [
     {
       "date": "2026-09-30",
@@ -343,6 +343,21 @@
       "prob_before": 14.46,
       "probability": 15.58,
       "note": "Bullseye. Sharma ji ka beta is mildly concerned."
+    },
+    {
+      "date": "2026-10-22",
+      "lo": 3,
+      "hi": 8,
+      "predicted": 6,
+      "actual": 5,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.12,
+      "delta": 1.12,
+      "clamped": null,
+      "prob_before": 15.58,
+      "probability": 16.7,
+      "note": "Called it. Now if only the offer letter would call back."
     }
   ],
   "visitors": {
@@ -350,7 +365,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 27,
+  "vote_issue": 28,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
