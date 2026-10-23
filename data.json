@@ -1,18 +1,18 @@
 {
-  "probability": 16.7,
-  "streak": 13,
-  "best_streak": 13,
+  "probability": 17.58,
+  "streak": 14,
+  "best_streak": 14,
   "opened": "2026-09-30",
-  "updated": "2026-10-23",
+  "updated": "2026-10-24",
   "pending": {
-    "for_date": "2026-10-23",
-    "lo": 4,
+    "for_date": "2026-10-24",
+    "lo": 3,
     "hi": 8,
-    "avg7": 5.86
+    "avg7": 5.71
   },
-  "last_result": "HIT",
-  "last_delta": 1.12,
-  "last_note": "Called it. Now if only the offer letter would call back.",
+  "last_result": "NEAR",
+  "last_delta": 0.88,
+  "last_note": "Close enough. Like my code, technically within tolerance.",
   "history": [
     {
       "date": "2026-09-30",
@@ -358,6 +358,21 @@
       "prob_before": 15.58,
       "probability": 16.7,
       "note": "Called it. Now if only the offer letter would call back."
+    },
+    {
+      "date": "2026-10-23",
+      "lo": 4,
+      "hi": 8,
+      "predicted": 6,
+      "actual": 3,
+      "result": "NEAR",
+      "hourly_manip": false,
+      "score": 0.88,
+      "delta": 0.88,
+      "clamped": null,
+      "prob_before": 16.7,
+      "probability": 17.58,
+      "note": "Close enough. Like my code, technically within tolerance."
     }
   ],
   "visitors": {
@@ -365,7 +380,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 28,
+  "vote_issue": 29,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
