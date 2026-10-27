@@ -1,18 +1,18 @@
 {
-  "probability": 21.33,
-  "streak": 17,
-  "best_streak": 17,
+  "probability": 22.66,
+  "streak": 18,
+  "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-10-27",
+  "updated": "2026-10-28",
   "pending": {
-    "for_date": "2026-10-27",
+    "for_date": "2026-10-28",
     "lo": 5,
     "hi": 6,
-    "avg7": 5.57
+    "avg7": 5.14
   },
   "last_result": "HIT",
-  "last_delta": 1.25,
-  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
+  "last_delta": 1.33,
+  "last_note": "Exact call. Analysts are stunned. HR is still on leave.",
   "history": [
     {
       "date": "2026-09-30",
@@ -418,6 +418,21 @@
       "prob_before": 20.08,
       "probability": 21.33,
       "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
+    },
+    {
+      "date": "2026-10-27",
+      "lo": 5,
+      "hi": 6,
+      "predicted": 6,
+      "actual": 5,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.33,
+      "delta": 1.33,
+      "clamped": null,
+      "prob_before": 21.33,
+      "probability": 22.66,
+      "note": "Exact call. Analysts are stunned. HR is still on leave."
     }
   ],
   "visitors": {
@@ -425,7 +440,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 32,
+  "vote_issue": 33,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
