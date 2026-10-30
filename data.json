@@ -1,18 +1,18 @@
 {
-  "probability": 23.58,
-  "streak": 1,
+  "probability": 24.18,
+  "streak": 2,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "pending": {
-    "for_date": "2026-10-30",
+    "for_date": "2026-10-31",
     "lo": 3,
     "hi": 6,
     "avg7": 4.71
   },
   "last_result": "HIT",
-  "last_delta": 0.67,
-  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
+  "last_delta": 0.6,
+  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
   "history": [
     {
       "date": "2026-09-30",
@@ -463,6 +463,21 @@
       "prob_before": 22.91,
       "probability": 23.58,
       "note": "Bullseye. Sharma ji ka beta is mildly concerned."
+    },
+    {
+      "date": "2026-10-30",
+      "lo": 3,
+      "hi": 6,
+      "predicted": 4,
+      "actual": 3,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 0.6,
+      "delta": 0.6,
+      "clamped": null,
+      "prob_before": 23.58,
+      "probability": 24.18,
+      "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
     }
   ],
   "visitors": {
@@ -470,7 +485,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 35,
+  "vote_issue": 36,
   "monthly_wrap": "2026-10",
   "monthly_wrap_note": "2026-09 earnings report: 1 session, 0% hit rate, probability -0.2pts. The alpha is imaginary but the vibes are quarterly-confirmed.",
   "last_clamped": null
