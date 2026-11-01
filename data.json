@@ -1,18 +1,18 @@
 {
-  "probability": 25.21,
-  "streak": 3,
+  "probability": 26.18,
+  "streak": 4,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-01",
+  "updated": "2026-11-02",
   "pending": {
-    "for_date": "2026-11-01",
+    "for_date": "2026-11-02",
     "lo": 3,
-    "hi": 6,
-    "avg7": 4.57
+    "hi": 5,
+    "avg7": 4.29
   },
   "last_result": "HIT",
-  "last_delta": 1.03,
-  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
+  "last_delta": 0.97,
+  "last_note": "Perfect prediction. Sadly, the recruiter inbox is not as predictable.",
   "history": [
     {
       "date": "2026-09-30",
@@ -493,6 +493,21 @@
       "prob_before": 24.18,
       "probability": 25.21,
       "note": "Bullseye. Sharma ji ka beta is mildly concerned."
+    },
+    {
+      "date": "2026-11-01",
+      "lo": 3,
+      "hi": 6,
+      "predicted": 4,
+      "actual": 4,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 0.97,
+      "delta": 0.97,
+      "clamped": null,
+      "prob_before": 25.21,
+      "probability": 26.18,
+      "note": "Perfect prediction. Sadly, the recruiter inbox is not as predictable."
     }
   ],
   "visitors": {
@@ -500,7 +515,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 37,
+  "vote_issue": 38,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
