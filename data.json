@@ -1,18 +1,18 @@
 {
-  "probability": 26.18,
-  "streak": 4,
+  "probability": 27.18,
+  "streak": 5,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-02",
+  "updated": "2026-11-03",
   "pending": {
-    "for_date": "2026-11-02",
+    "for_date": "2026-11-03",
     "lo": 3,
     "hi": 5,
-    "avg7": 4.29
+    "avg7": 3.86
   },
   "last_result": "HIT",
-  "last_delta": 0.97,
-  "last_note": "Perfect prediction. Sadly, the recruiter inbox is not as predictable.",
+  "last_delta": 1.0,
+  "last_note": "Exact call. Analysts are stunned. HR is still on leave.",
   "history": [
     {
       "date": "2026-09-30",
@@ -508,6 +508,21 @@
       "prob_before": 25.21,
       "probability": 26.18,
       "note": "Perfect prediction. Sadly, the recruiter inbox is not as predictable."
+    },
+    {
+      "date": "2026-11-02",
+      "lo": 3,
+      "hi": 5,
+      "predicted": 4,
+      "actual": 3,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.0,
+      "delta": 1.0,
+      "clamped": null,
+      "prob_before": 26.18,
+      "probability": 27.18,
+      "note": "Exact call. Analysts are stunned. HR is still on leave."
     }
   ],
   "visitors": {
@@ -515,7 +530,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 38,
+  "vote_issue": 39,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
