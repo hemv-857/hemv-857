@@ -1,18 +1,18 @@
 {
-  "probability": 27.18,
-  "streak": 5,
+  "probability": 28.08,
+  "streak": 6,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-03",
+  "updated": "2026-11-04",
   "pending": {
-    "for_date": "2026-11-03",
+    "for_date": "2026-11-04",
     "lo": 3,
-    "hi": 5,
-    "avg7": 3.86
+    "hi": 4,
+    "avg7": 3.43
   },
-  "last_result": "HIT",
-  "last_delta": 1.0,
-  "last_note": "Exact call. Analysts are stunned. HR is still on leave.",
+  "last_result": "NEAR",
+  "last_delta": 0.9,
+  "last_note": "Off by one, the most relatable bug in history.",
   "history": [
     {
       "date": "2026-09-30",
@@ -523,6 +523,21 @@
       "prob_before": 26.18,
       "probability": 27.18,
       "note": "Exact call. Analysts are stunned. HR is still on leave."
+    },
+    {
+      "date": "2026-11-03",
+      "lo": 3,
+      "hi": 5,
+      "predicted": 4,
+      "actual": 2,
+      "result": "NEAR",
+      "hourly_manip": false,
+      "score": 0.9,
+      "delta": 0.9,
+      "clamped": null,
+      "prob_before": 27.18,
+      "probability": 28.08,
+      "note": "Off by one, the most relatable bug in history."
     }
   ],
   "visitors": {
@@ -530,7 +545,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 39,
+  "vote_issue": 40,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
