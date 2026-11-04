@@ -1,18 +1,18 @@
 {
-  "probability": 28.08,
-  "streak": 6,
+  "probability": 29.58,
+  "streak": 7,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-04",
+  "updated": "2026-11-05",
   "pending": {
-    "for_date": "2026-11-04",
+    "for_date": "2026-11-05",
     "lo": 3,
     "hi": 4,
-    "avg7": 3.43
+    "avg7": 3.57
   },
-  "last_result": "NEAR",
-  "last_delta": 0.9,
-  "last_note": "Off by one, the most relatable bug in history.",
+  "last_result": "HIT",
+  "last_delta": 1.5,
+  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
   "history": [
     {
       "date": "2026-09-30",
@@ -538,6 +538,21 @@
       "prob_before": 27.18,
       "probability": 28.08,
       "note": "Off by one, the most relatable bug in history."
+    },
+    {
+      "date": "2026-11-04",
+      "lo": 3,
+      "hi": 4,
+      "predicted": 4,
+      "actual": 4,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.5,
+      "delta": 1.5,
+      "clamped": null,
+      "prob_before": 28.08,
+      "probability": 29.58,
+      "note": "Bullseye. Sharma ji ka beta is mildly concerned."
     }
   ],
   "visitors": {
@@ -545,7 +560,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 40,
+  "vote_issue": 41,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
