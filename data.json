@@ -1,18 +1,18 @@
 {
-  "probability": 31.08,
-  "streak": 8,
+  "probability": 32.33,
+  "streak": 9,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-06",
+  "updated": "2026-11-07",
   "pending": {
-    "for_date": "2026-11-06",
+    "for_date": "2026-11-07",
     "lo": 3,
     "hi": 4,
     "avg7": 3.57
   },
   "last_result": "HIT",
-  "last_delta": 1.5,
-  "last_note": "Bullseye. Sharma ji ka beta is mildly concerned.",
+  "last_delta": 1.25,
+  "last_note": "Called it. Now if only the offer letter would call back.",
   "history": [
     {
       "date": "2026-09-30",
@@ -568,6 +568,21 @@
       "prob_before": 29.58,
       "probability": 31.08,
       "note": "Bullseye. Sharma ji ka beta is mildly concerned."
+    },
+    {
+      "date": "2026-11-06",
+      "lo": 3,
+      "hi": 4,
+      "predicted": 4,
+      "actual": 3,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.25,
+      "delta": 1.25,
+      "clamped": null,
+      "prob_before": 31.08,
+      "probability": 32.33,
+      "note": "Called it. Now if only the offer letter would call back."
     }
   ],
   "visitors": {
@@ -575,7 +590,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 42,
+  "vote_issue": 43,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
