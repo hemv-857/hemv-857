@@ -152,19 +152,20 @@ A prediction market on my own commit count. A GitHub Action quotes a range every
 <!--HIRE_EXCHANGE:START-->
 <div align="center">
 
-<img src="assets/ticker.svg?v=26d125b8" alt="Hire probability 32.33% (analyst rating: BUY). 368 commits in 30 sessions · 12/day · never missed a day. Streak: 9." width="640">
+<img src="assets/ticker.svg?v=013b3e92" alt="Hire probability 33.58% (analyst rating: BUY). 364 commits in 30 sessions · 12/day · never missed a day. Streak: 10." width="640">
 
 </div>
 
 <br>
 
-*38 sessions · 89% hit rate · best streak 18 · 24 exact / 6 near / 4 beat / 4 miss*
+*39 sessions · 90% hit rate · best streak 18 · 25 exact / 6 near / 4 beat / 4 miss*
 
 > 📊 2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.
 
 | Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
 |---|:-:|:-:|---|:-:|:-:|
-| **2026-11-07** (today) | 3–4 | ⏳ | Market open | | |
+| **2026-11-08** (today) | 3–4 | ⏳ | Market open | | |
+| 2026-11-07 | 3–4 | 3 | ✅ Exact hit | +1.25 | 33.58% |
 | 2026-11-06 | 3–4 | 3 | ✅ Exact hit | +1.25 | 32.33% |
 | 2026-11-05 | 3–4 | 4 | ✅ Exact hit | +1.50 | 31.08% |
 | 2026-11-04 | 3–4 | 4 | ✅ Exact hit | +1.50 | 29.58% |
@@ -178,7 +179,6 @@ A prediction market on my own commit count. A GitHub Action quotes a range every
 | 2026-10-27 | 5–6 | 5 | ✅ Exact hit | +1.33 | 22.66% |
 | 2026-10-26 | 5–8 | 6 | ✅ Exact hit | +1.25 | 21.33% |
 | 2026-10-25 | 5–8 | 6 | ✅ Exact hit | +1.25 | 20.08% |
-| 2026-10-24 | 3–8 | 6 | ✅ Exact hit | +1.25 | 18.83% |
 
 <details>
 <summary>How does this work? (a.k.a. why is this in my README)</summary>

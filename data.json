@@ -1,18 +1,18 @@
 {
-  "probability": 32.33,
-  "streak": 9,
+  "probability": 33.58,
+  "streak": 10,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-07",
+  "updated": "2026-11-08",
   "pending": {
-    "for_date": "2026-11-07",
+    "for_date": "2026-11-08",
     "lo": 3,
     "hi": 4,
-    "avg7": 3.57
+    "avg7": 3.29
   },
   "last_result": "HIT",
   "last_delta": 1.25,
-  "last_note": "Called it. Now if only the offer letter would call back.",
+  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
   "history": [
     {
       "date": "2026-09-30",
@@ -583,6 +583,21 @@
       "prob_before": 31.08,
       "probability": 32.33,
       "note": "Called it. Now if only the offer letter would call back."
+    },
+    {
+      "date": "2026-11-07",
+      "lo": 3,
+      "hi": 4,
+      "predicted": 4,
+      "actual": 3,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.25,
+      "delta": 1.25,
+      "clamped": null,
+      "prob_before": 32.33,
+      "probability": 33.58,
+      "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
     }
   ],
   "visitors": {
@@ -590,7 +605,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 43,
+  "vote_issue": 44,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
