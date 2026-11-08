@@ -1,18 +1,18 @@
 {
-  "probability": 33.58,
-  "streak": 10,
+  "probability": 34.58,
+  "streak": 11,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-08",
+  "updated": "2026-11-09",
   "pending": {
-    "for_date": "2026-11-08",
-    "lo": 3,
+    "for_date": "2026-11-09",
+    "lo": 2,
     "hi": 4,
-    "avg7": 3.29
+    "avg7": 3.0
   },
-  "last_result": "HIT",
-  "last_delta": 1.25,
-  "last_note": "Market is bullish. Recruiters remain bearish on reading READMEs.",
+  "last_result": "NEAR",
+  "last_delta": 1.0,
+  "last_note": "Almost exact. Almost hired. Almost is the theme.",
   "history": [
     {
       "date": "2026-09-30",
@@ -598,6 +598,21 @@
       "prob_before": 32.33,
       "probability": 33.58,
       "note": "Market is bullish. Recruiters remain bearish on reading READMEs."
+    },
+    {
+      "date": "2026-11-08",
+      "lo": 3,
+      "hi": 4,
+      "predicted": 4,
+      "actual": 2,
+      "result": "NEAR",
+      "hourly_manip": false,
+      "score": 1.0,
+      "delta": 1.0,
+      "clamped": null,
+      "prob_before": 33.58,
+      "probability": 34.58,
+      "note": "Almost exact. Almost hired. Almost is the theme."
     }
   ],
   "visitors": {
@@ -605,7 +620,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 44,
+  "vote_issue": 45,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
