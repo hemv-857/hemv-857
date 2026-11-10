@@ -1,18 +1,18 @@
 {
-  "probability": 34.58,
-  "streak": 11,
+  "probability": 35.83,
+  "streak": 12,
   "best_streak": 18,
   "opened": "2026-09-30",
-  "updated": "2026-11-09",
+  "updated": "2026-11-10",
   "pending": {
-    "for_date": "2026-11-09",
+    "for_date": "2026-11-10",
     "lo": 2,
     "hi": 4,
     "avg7": 3.0
   },
-  "last_result": "NEAR",
-  "last_delta": 1.0,
-  "last_note": "Almost exact. Almost hired. Almost is the theme.",
+  "last_result": "HIT",
+  "last_delta": 1.25,
+  "last_note": "Exact call. Analysts are stunned. HR is still on leave.",
   "history": [
     {
       "date": "2026-09-30",
@@ -613,6 +613,21 @@
       "prob_before": 33.58,
       "probability": 34.58,
       "note": "Almost exact. Almost hired. Almost is the theme."
+    },
+    {
+      "date": "2026-11-09",
+      "lo": 2,
+      "hi": 4,
+      "predicted": 3,
+      "actual": 3,
+      "result": "HIT",
+      "hourly_manip": false,
+      "score": 1.25,
+      "delta": 1.25,
+      "clamped": null,
+      "prob_before": 34.58,
+      "probability": 35.83,
+      "note": "Exact call. Analysts are stunned. HR is still on leave."
     }
   ],
   "visitors": {
@@ -620,7 +635,7 @@
     "miss": 0,
     "correct": 0
   },
-  "vote_issue": 45,
+  "vote_issue": 46,
   "monthly_wrap": "2026-11",
   "monthly_wrap_note": "2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.",
   "last_clamped": null
