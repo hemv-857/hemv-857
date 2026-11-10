@@ -12,7 +12,6 @@
   <a href="#%EF%B8%8F-on-track">On track</a> ·
   <a href="#-in-the-market">In the market</a> ·
   <a href="#-under-the-bonnet">Under the bonnet</a> ·
-  <a href="#-live-my-chances-of-getting-hired">Hire exchange</a> ·
   <a href="#-team-radio">Team radio</a>
 </p>
 
@@ -142,60 +141,6 @@ Greenfield repos are the easy part. Getting a change merged into someone else's 
 | [topoteretes/cognee-community#202](https://github.com/topoteretes/cognee-community/pull/202) | Raindrop.io data-source connector |
 
 </details>
-
-<p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
-
-## 🔮 Live: my chances of getting hired
-
-A prediction market on my own commit count. A GitHub Action quotes a range every midnight IST and settles the trade the next night.
-
-<!--HIRE_EXCHANGE:START-->
-<div align="center">
-
-<img src="assets/ticker.svg?v=788ffbe8" alt="Hire probability 35.83% (analyst rating: BUY). 361 commits in 30 sessions · 12/day · never missed a day. Streak: 12." width="640">
-
-</div>
-
-<br>
-
-*41 sessions · 90% hit rate · best streak 18 · 26 exact / 7 near / 4 beat / 4 miss*
-
-> 📊 2026-10 earnings report: 31 sessions, 87% hit rate, probability +23.7pts. Another month, another set of predictions nobody asked for.
-
-| Date (IST) | Forecast | Shipped | Result | Δ pts | Hire probability |
-|---|:-:|:-:|---|:-:|:-:|
-| **2026-11-10** (today) | 2–4 | ⏳ | Market open | | |
-| 2026-11-09 | 2–4 | 3 | ✅ Exact hit | +1.25 | 35.83% |
-| 2026-11-08 | 3–4 | 2 | 🟢 Near hit | +1.00 | 34.58% |
-| 2026-11-07 | 3–4 | 3 | ✅ Exact hit | +1.25 | 33.58% |
-| 2026-11-06 | 3–4 | 3 | ✅ Exact hit | +1.25 | 32.33% |
-| 2026-11-05 | 3–4 | 4 | ✅ Exact hit | +1.50 | 31.08% |
-| 2026-11-04 | 3–4 | 4 | ✅ Exact hit | +1.50 | 29.58% |
-| 2026-11-03 | 3–5 | 2 | 🟢 Near hit | +0.90 | 28.08% |
-| 2026-11-02 | 3–5 | 3 | ✅ Exact hit | +1.00 | 27.18% |
-| 2026-11-01 | 3–6 | 4 | ✅ Exact hit | +0.97 | 26.18% |
-| 2026-10-31 | 3–6 | 5 | ✅ Exact hit | +1.03 | 25.21% |
-| 2026-10-30 | 3–6 | 3 | ✅ Exact hit | +0.60 | 24.18% |
-| 2026-10-29 | 3–6 | 4 | ✅ Exact hit | +0.67 | 23.58% |
-| 2026-10-28 | 5–6 | 3 | ❌ Miss | +0.25 | 22.91% |
-| 2026-10-27 | 5–6 | 5 | ✅ Exact hit | +1.33 | 22.66% |
-
-<details>
-<summary>How does this work? (a.k.a. why is this in my README)</summary>
-
-- Every day at 00:05 IST a GitHub Action **forecasts a range** for the day: the 7 day trailing window, trimmed — the smallest and largest are dropped, so one monster day can’t turn every forecast into a shrug. It lands about half the time.
-- Counts are the commits that still exist on my repos' default branches, so `git log` agrees with me. GitHub's contribution graph never retracts a commit — rebased and amended work stays counted forever, and it claimed 74 for a day with 38 commits in it.
-- The next midnight it fetches my **real** commit count and settles the trade.
-- Points follow the work: **0** for a day with no commits, up to **1** for matching the top of the range, and up to **1.5** for beating it. Streaks add a small bonus.
-- Landing inside the range is a hit, 1 under is a near miss, further under is **-0.25**, and no commits on a day that expected work is **-0.5**.
-- Shipping more is never punished. Beating the top of the range is the best possible day, and the score keeps climbing with the overshoot.
-- Market manipulation means one thing only: 10+ commits within 60 minutes **in this profile repo** — the only way to game the contribution graph. Overachieving a low forecast across real repos is not a crime. Penalty: **-1.5** pts.
-- **Visitors:** 👍/👎 on today's [voting issue](https://github.com/hemv-857/hemv-857/issues) to predict whether the bot hits. No prize, just bragging rights.
-- **Monthly:** on the 1st, an earnings report summarises the previous month.
-- Probability is 100% fiction. The 100% real part: I actually ship code, and I'm actually looking for a job.
-
-</details>
-<!--HIRE_EXCHANGE:END-->
 
 <p align="center"><img src="assets/divider.svg" width="820" alt=""></p>
 
