@@ -98,13 +98,15 @@ More probability than finance: [Projects](https://github.com/hemv-857/Projects) 
 
 ## 🔧 Pit crew for other people's cars
 
-Greenfield repos are the easy part. Getting a change merged into someone else's codebase is the part I'm proudest of: **11 merged so far**, mostly in quant libraries and developer tooling.
+Greenfield repos are the easy part. Getting a change merged into someone else's codebase is the part I'm proudest of: **14 merged so far**, mostly in quant libraries and developer tooling.
 
 **Quant and research**
 
 - **[ArturSepp/QuantInvestStrats#192](https://github.com/ArturSepp/QuantInvestStrats/pull/192)**: reconstruct instrument P&L across missing quotes, so contributions still sum to NAV
 - **[ArturSepp/QuantInvestStrats#225](https://github.com/ArturSepp/QuantInvestStrats/pull/225)**: run the offline quickstart with sockets patched to raise, so a network call can never pass silently
 - **[ArturSepp/QuantInvestStrats#227](https://github.com/ArturSepp/QuantInvestStrats/pull/227)**: map every printed quickstart output to the Python object that produced it
+- **[google-research/timesfm#552](https://github.com/google-research/timesfm/pull/552)**: raise an actionable, chained error when an optional backend is missing, without breaking `hasattr` probes
+- **[google-research/timesfm#555](https://github.com/google-research/timesfm/pull/555)**: apply the same contract to the `timesfm3` top-level re-exports
 - **[bloomberg/causal-ts#83](https://github.com/bloomberg/causal-ts/pull/83)**: guard batched ParCorrGPU precision inverses, falling back to OLS instead of inverting an ill-conditioned matrix
 - **[bloomberg/causal-ts#85](https://github.com/bloomberg/causal-ts/pull/85)**: pair all 30 example notebooks with Jupytext scripts, so changes review as `.py` diffs
 - **[bloomberg/causal-ts#86](https://github.com/bloomberg/causal-ts/pull/86)**: set up all-contributors, seeded with every human contributor
@@ -112,6 +114,7 @@ Greenfield repos are the easy part. Getting a change merged into someone else's 
 **Compilers, runtimes and tooling**
 
 - **[swiftlang/swift#93473](https://github.com/swiftlang/swift/pull/93473)**: retry each clone/update in `update-checkout`, instead of re-fetching all 51 repositories when one flakes
+- **[google/adk-go#1903](https://github.com/google/adk-go/pull/1903)**: send live tool responses through the sender goroutine, so the single-writer invariant holds
 - **[affaan-m/ECC#3590](https://github.com/affaan-m/ECC/pull/3590)**: accept JSONC comments in `opencode.json` while checking config membership during `ecc install`
 - **[morluto/rea#4219](https://github.com/morluto/rea/pull/4219)**: honour package-main selection for trailing-slash directory references
 - **[morluto/rea#4511](https://github.com/morluto/rea/pull/4511)**: keep CommonJS ``require(`mod`)`` dependencies visible in the source graph
@@ -123,12 +126,12 @@ Greenfield repos are the easy part. Getting a change merged into someone else's 
 | Project | PR |
 |---|---|
 | [swiftlang/swift#93581](https://github.com/swiftlang/swift/pull/93581) | clearer errors for inherited-only type attributes |
-| [sympy/sympy#30901](https://github.com/sympy/sympy/pull/30901) | short-circuit `is_irreducible` for univariate polynomials over CC |
+| [sympy/sympy#30901](https://github.com/sympy/sympy/pull/30901) | factor `CC` polynomials over the Gaussian rationals so `is_irreducible` and `factor` agree |
 | [openai/tiktoken#623](https://github.com/openai/tiktoken/pull/623) | restore manylinux2014 x86_64 wheels |
-| [google-research/timesfm#552](https://github.com/google-research/timesfm/pull/552) | actionable errors when optional backends fail to import |
 | [microsoft/qlib#2386](https://github.com/microsoft/qlib/pull/2386) | drop `pkg_resources` from `collect_info.py` |
 | [goldmansachs/gs-quant#409](https://github.com/goldmansachs/gs-quant/pull/409) | size the default correlation window on cleaned returns |
-| [google/adk-go#1903](https://github.com/google/adk-go/pull/1903) | send live tool responses through the sender goroutine |
+| [google/adk-go#2273](https://github.com/google/adk-go/pull/2273) | serialize concurrent appends to one session row |
+| [google/adk-go#2274](https://github.com/google/adk-go/pull/2274) | run the tool callbacks for a failed streaming tool |
 | [crewAIInc/crewAI#8490](https://github.com/crewAIInc/crewAI/pull/8490) | filter pull requests before limiting GitHub issues |
 | [dagster-io/dagster#34361](https://github.com/dagster-io/dagster/pull/34361) | exclude dbt v2 unit tests from fusion result events |
 | [ray-project/ray#67476](https://github.com/ray-project/ray/pull/67476) | bump the starlette floor past known CVEs |
