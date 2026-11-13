@@ -121,7 +121,7 @@ Greenfield repos are the easy part. Getting a change merged into someone else's 
 - **[tt-a1i/archify#986](https://github.com/tt-a1i/archify/pull/986)**: add class, tree, timeline and waterfall promoted-type recipes
 
 <details>
-<summary><b>17 open PRs in the pit lane, awaiting review</b></summary>
+<summary><b>18 open PRs in the pit lane, awaiting review</b></summary>
 
 | Project | PR |
 |---|---|
@@ -137,6 +137,7 @@ Greenfield repos are the easy part. Getting a change merged into someone else's 
 | [ray-project/ray#67476](https://github.com/ray-project/ray/pull/67476) | bump the starlette floor past known CVEs |
 | [openyurtio/openyurt#2843](https://github.com/openyurtio/openyurt/pull/2843) | fall back to an interface address when there is no default route |
 | [bloomberg/bde#320](https://github.com/bloomberg/bde/pull/320) | fix MSVC `/bigobj` flags for bsl and bdlar |
+| [bloomberg/causal-ts#121](https://github.com/bloomberg/causal-ts/pull/121) | make `o-o` / `x-x` graph-comparison policies configurable |
 | [jaegertracing/jaeger#9839](https://github.com/jaegertracing/jaeger/pull/9839) | align built-in skill descriptions with the index |
 | [jaegertracing/jaeger#9842](https://github.com/jaegertracing/jaeger/pull/9842) | restore the MCP tool limit tunables |
 | [morluto/rea#3525](https://github.com/morluto/rea/pull/3525) | recover structured tool arguments sent as JSON text |
